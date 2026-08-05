@@ -467,11 +467,14 @@
     btnText.textContent = 'Sending...';
 
     try {
+      // URLSearchParams sends as application/x-www-form-urlencoded, which
+      // avoids a CORS preflight AND Make parses it into fields natively
+      // (unlike a JSON string sent with a non-JSON content-type, which
+      // Make silently fails to parse).
+      const body = new URLSearchParams({ business_name, address, email });
       await fetch(WEBHOOK_URL, {
         method: 'POST',
-        // text/plain avoids a CORS preflight; Make still parses the JSON body.
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ business_name, address, email })
+        body: body
       });
 
       showMsg("Got it. Your audit is on its way to " + email + " — usually within a couple minutes.", "success");
