@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>On The Map — Free Google Business Profile Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --asphalt:#15171C;
+    --asphalt-2:#1E2128;
+    --paper:#F3F0E8;
+    --paper-2:#EAE5D8;
+    --pin:#E8542A;
+    --pin-dark:#C7431D;
+    --route:#2B4C7E;
+    --found:#2F8F5B;
+    --ink:#15171C;
+    --ink-soft:#5B5F6B;
+    --line:rgba(21,23,28,0.12);
+    --line-dark:rgba(243,240,232,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.01em;
+    margin:0;
+    line-height:0.95;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;top:0;z-index:20;
+    background:var(--asphalt);
+    color:var(--paper);
+    border-bottom:1px solid var(--line-dark);
+  }
+  .header-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 24px;max-width:1040px;margin:0 auto;
+  }
+  .wordmark{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;letter-spacing:0.04em;
+    display:flex;align-items:center;gap:8px;
+  }
+  .wordmark .dot{
+    width:9px;height:9px;border-radius:50%;background:var(--pin);
+    box-shadow:0 0 0 3px rgba(232,84,42,0.25);
+  }
+  .header-cta{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;font-weight:500;
+    color:var(--paper);
+    border:1px solid var(--line-dark);
+    padding:9px 16px;border-radius:2px;
+    text-decoration:none;
+    transition:background 0.15s ease, border-color 0.15s ease;
+  }
+  .header-cta:hover{background:var(--pin);border-color:var(--pin);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--asphalt);
+    color:var(--paper);
+    padding:72px 0 56px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(var(--line-dark) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-dark) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.35;
+    mask-image:radial-gradient(ellipse at 30% 20%, black 0%, transparent 65%);
+  }
+  .hero-inner{position:relative;z-index:2;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--pin);
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--pin);}
+  .hero h1{
+    font-size:clamp(42px,7vw,86px);
+    max-width:15ch;
+    color:var(--paper);
+  }
+  .hero h1 em{
+    font-style:normal;color:var(--pin);
+  }
+  .hero-sub{
+    font-size:18px;line-height:1.55;color:#C7CAD4;
+    max-width:46ch;margin:26px 0 36px;
+  }
+  .hero-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  .btn-primary{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;font-size:14.5px;
+    background:var(--pin);color:var(--paper);
+    border:none;padding:16px 26px;border-radius:2px;
+    cursor:pointer;text-decoration:none;
+    display:inline-flex;align-items:center;gap:10px;
+    transition:transform 0.12s ease, background 0.15s ease;
+  }
+  .btn-primary:hover{background:var(--pin-dark);transform:translateY(-1px);}
+  .btn-primary svg{width:16px;height:16px;}
+  .hero-note{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;color:#8B8F9C;
+  }
+
+  /* ---------- PIN STRIP (signature element) ---------- */
+  .pinstrip-wrap{
+    margin-top:60px;
+    border:1px solid var(--line-dark);
+    background:rgba(255,255,255,0.03);
+    border-radius:4px;
+    padding:28px 24px 22px;
+    position:relative;
+  }
+  .pinstrip-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;
+    color:#8B8F9C;margin-bottom:18px;
+  }
+  .pinstrip{
+    display:flex;align-items:flex-end;gap:10px;
+    overflow-x:auto;
+    padding-bottom:4px;
+  }
+  .pin-slot{
+    flex:0 0 auto;
+    width:96px;
+    text-align:center;
+  }
+  .pin-slot .rank{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:15px;color:#6C7080;margin-bottom:8px;
+  }
+  .pin-slot .pin-icon{
+    width:34px;height:34px;margin:0 auto 8px;
+    border-radius:50% 50% 50% 0;
+    background:var(--asphalt-2);
+    border:1.5px solid #3B3F4A;
+    transform:rotate(-45deg);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .pin-slot .pin-icon span{transform:rotate(45deg);width:8px;height:8px;border-radius:50%;background:#5A5E6B;}
+  .pin-slot .biz{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;color:#6C7080;line-height:1.3;
+  }
+  .pin-slot.you .pin-icon{
+    background:var(--pin);border-color:var(--pin);
+    animation:drop 0.6s ease 1.1s both;
+  }
+  .pin-slot.you .pin-icon span{background:var(--paper);}
+  .pin-slot.you .rank{color:var(--pin);}
+  .pin-slot.you .biz{color:var(--paper);font-weight:500;}
+  .pin-ghost{
+    flex:0 0 auto;width:96px;text-align:center;opacity:0.55;
+  }
+  .pin-ghost .pin-icon{
+    width:34px;height:34px;margin:0 auto 8px;
+    border-radius:50% 50% 50% 0;
+    border:1.5px dashed #4A4E59;
+    transform:rotate(-45deg);
+  }
+  .pin-ghost .biz{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;color:#565A66;
+  }
+  @keyframes drop{
+    0%{transform:translateY(-14px) scale(0.7);opacity:0;}
+    60%{transform:translateY(2px) scale(1.05);opacity:1;}
+    100%{transform:translateY(0) scale(1);}
+  }
+
+  /* ---------- WHAT WE CHECK ---------- */
+  .section{padding:76px 0;}
+  .section-head{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    gap:24px;margin-bottom:40px;flex-wrap:wrap;
+  }
+  .section-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .section-head h2{font-size:clamp(30px,4vw,44px);}
+  .checklist{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);
+    border-radius:4px;overflow:hidden;
+  }
+  .check-card{background:var(--paper);padding:26px 22px;}
+  .check-card .num{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--pin);
+    margin-bottom:14px;
+  }
+  .check-card h3{
+    font-family:'IBM Plex Sans',sans-serif;font-weight:600;
+    font-size:16px;line-height:1.3;margin-bottom:8px;
+  }
+  .check-card p{
+    font-size:13.5px;line-height:1.5;color:var(--ink-soft);margin:0;
+  }
+
+  /* ---------- FORM ---------- */
+  .form-section{background:var(--paper-2);}
+  .ticket{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:6px;
+    max-width:560px;margin:0 auto;
+    box-shadow:0 1px 0 var(--line), 0 18px 40px -24px rgba(21,23,28,0.35);
+    overflow:hidden;
+  }
+  .ticket-head{
+    background:var(--asphalt);color:var(--paper);
+    padding:22px 28px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:2px dashed #3B3F4A;
+  }
+  .ticket-head .t1{font-family:'Bebas Neue',sans-serif;font-size:24px;}
+  .ticket-head .t2{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8B8F9C;
+    text-align:right;
+  }
+  .ticket-body{padding:30px 28px 28px;}
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block;font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--ink-soft);margin-bottom:7px;
+  }
+  .field input{
+    width:100%;padding:13px 14px;
+    border:1.5px solid var(--line);border-radius:3px;
+    font-family:'IBM Plex Sans',sans-serif;font-size:15px;
+    background:#FCFBF8;color:var(--ink);
+    transition:border-color 0.15s ease;
+  }
+  .field input:focus{outline:none;border-color:var(--route);}
+  .field-row{display:flex;gap:14px;}
+  .field-row .field{flex:1;}
+  .hp{position:absolute;left:-9999px;opacity:0;}
+  .submit-btn{
+    width:100%;margin-top:6px;
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;
+    background:var(--pin);color:var(--paper);border:none;
+    padding:16px;border-radius:3px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    transition:background 0.15s ease;
+  }
+  .submit-btn:hover{background:var(--pin-dark);}
+  .submit-btn:disabled{background:#B9BCC4;cursor:default;}
+  .form-foot{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);
+    margin-top:14px;text-align:center;
+  }
+  .msg{
+    margin-top:16px;padding:14px 16px;border-radius:3px;
+    font-size:14px;line-height:1.5;display:none;
+  }
+  .msg.show{display:block;}
+  .msg.success{background:rgba(47,143,91,0.1);color:#1E6640;border:1px solid rgba(47,143,91,0.3);}
+  .msg.error{background:rgba(199,67,29,0.08);color:var(--pin-dark);border:1px solid rgba(199,67,29,0.3);}
+  .spinner{
+    width:15px;height:15px;border-radius:50%;
+    border:2px solid rgba(243,240,232,0.4);border-top-color:var(--paper);
+    animation:spin 0.7s linear infinite;display:none;
+  }
+  .submit-btn.loading .spinner{display:inline-block;}
+  .submit-btn.loading .btn-text{opacity:0.7;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--asphalt);color:#8B8F9C;
+    padding:32px 0;font-family:'IBM Plex Mono',monospace;font-size:12px;
+  }
+  .footer-row{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+
+  @media (max-width:760px){
+    .checklist{grid-template-columns:repeat(2,1fr);}
+    .field-row{flex-direction:column;gap:0;}
+    .header-cta{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div class="wordmark"><span class="dot"></span>ON&nbsp;THE&nbsp;MAP</div>
+    <a class="header-cta" href="#audit">Get my free audit</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="eyebrow">Free Google Business Profile audit</div>
+    <h1>Right now, are you even <em>in the room?</em></h1>
+    <p class="hero-sub">Most people looking for a plumber, an HVAC tech, or a roofer never scroll past the first 5 names Google shows them. We'll tell you — for free, in about a minute — exactly where you stand and what's keeping you out.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#audit">
+        Run my free audit
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <span class="hero-note">No signup. No credit card. Just your listing, checked.</span>
+    </div>
+
+    <div class="pinstrip-wrap">
+      <div class="pinstrip-label">What shows up when someone searches "[your trade] near me"</div>
+      <div class="pinstrip">
+        <div class="pin-slot"><div class="rank">1</div><div class="pin-icon"><span></span></div><div class="biz">Competitor A</div></div>
+        <div class="pin-slot"><div class="rank">2</div><div class="pin-icon"><span></span></div><div class="biz">Competitor B</div></div>
+        <div class="pin-slot"><div class="rank">3</div><div class="pin-icon"><span></span></div><div class="biz">Competitor C</div></div>
+        <div class="pin-slot"><div class="rank">4</div><div class="pin-icon"><span></span></div><div class="biz">Competitor D</div></div>
+        <div class="pin-slot you"><div class="rank">5</div><div class="pin-icon"><span></span></div><div class="biz">You — finally</div></div>
+        <div class="pin-ghost"><div class="pin-icon"></div><div class="biz">↓ where you<br>are today</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">The audit</div>
+        <h2>What we actually check</h2>
+      </div>
+    </div>
+    <div class="checklist">
+      <div class="check-card">
+        <div class="num mono">01</div>
+        <h3>Category accuracy</h3>
+        <p>The single biggest ranking lever — and the one almost every neglected profile gets wrong.</p>
+      </div>
+      <div class="check-card">
+        <div class="num mono">02</div>
+        <h3>Review health</h3>
+        <p>Count, rating, recency, and how fast you're responding. Stale reviews rank worse than no reviews.</p>
+      </div>
+      <div class="check-card">
+        <div class="num mono">03</div>
+        <h3>Profile completeness</h3>
+        <p>Hours, services, photos, service area — the fundamentals Google rewards and most owners skip.</p>
+      </div>
+      <div class="check-card">
+        <div class="num mono">04</div>
+        <h3>Quick wins</h3>
+        <p>Three specific, do-this-first fixes — not a 40-page report you'll never open.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section form-section" id="audit">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:32px;">
+      <div>
+        <div class="section-eyebrow">Takes about 60 seconds</div>
+        <h2>Get your audit</h2>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="ticket-head">
+        <div class="t1">Audit request</div>
+        <div class="t2">FORM&nbsp;NO.&nbsp;OTM-01<br>NO&nbsp;COST</div>
+      </div>
+      <div class="ticket-body">
+        <form id="auditForm" novalidate>
+          <div class="field">
+            <label for="business_name">Business name</label>
+            <input type="text" id="business_name" name="business_name" placeholder="e.g. Midwest Plumbing Co." required>
+          </div>
+          <div class="field">
+            <label for="address">Business address</label>
+            <input type="text" id="address" name="address" placeholder="Street, city, state" required>
+          </div>
+          <div class="field">
+            <label for="email">Email — we'll send the audit here</label>
+            <input type="email" id="email" name="email" placeholder="you@yourbusiness.com" required>
+          </div>
+          <input type="text" name="company_website" class="hp" tabindex="-1" autocomplete="off">
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span class="spinner"></span>
+            <span class="btn-text">Run my free audit</span>
+          </button>
+          <div class="form-foot">We'll email your results. No spam, no follow-up calls unless you ask.</div>
+          <div class="msg" id="formMsg"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <div>ON THE MAP — LOCAL VISIBILITY, DONE FOR YOU</div>
+    <div>&copy; 2026</div>
+  </div>
+</footer>
+
+<script>
+  const WEBHOOK_URL = "https://hook.us2.make.com/roa00p942jj3uzck5u6idxhv6jsa4ab0";
+
+  const form = document.getElementById('auditForm');
+  const btn = document.getElementById('submitBtn');
+  const btnText = btn.querySelector('.btn-text');
+  const msg = document.getElementById('formMsg');
+
+  function showMsg(text, type){
+    msg.textContent = text;
+    msg.className = 'msg show ' + type;
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    msg.className = 'msg';
+
+    // honeypot — if filled, silently pretend success (bot trap)
+    if (form.company_website.value.trim() !== '') {
+      showMsg("Thanks — your audit is on its way. Check your inbox shortly.", "success");
+      form.reset();
+      return;
+    }
+
+    const business_name = form.business_name.value.trim();
+    const address = form.address.value.trim();
+    const email = form.email.value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!business_name || !address || !emailOk) {
+      showMsg("Double check your business name, address, and a valid email — then try again.", "error");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btnText.textContent = 'Sending...';
+
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        // text/plain avoids a CORS preflight; Make still parses the JSON body.
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ business_name, address, email })
+      });
+
+      showMsg("Got it. Your audit is on its way to " + email + " — usually within a couple minutes.", "success");
+      form.reset();
+    } catch (err) {
+      showMsg("Something went wrong sending that. Mind trying again in a moment?", "error");
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btnText.textContent = 'Run my free audit';
+    }
+  });
+</script>
+
+</body>
+</html>
