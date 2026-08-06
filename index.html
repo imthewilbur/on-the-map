@@ -71,6 +71,12 @@
     transition:background 0.15s ease, border-color 0.15s ease;
   }
   .header-cta:hover{background:var(--pin);border-color:var(--pin);}
+  .nav-links{
+    display:flex;gap:26px;align-items:center;
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#C7CAD4;
+  }
+  .nav-links a{text-decoration:none;color:inherit;transition:color 0.15s ease;}
+  .nav-links a:hover{color:var(--paper);}
 
   /* ---------- HERO ---------- */
   .hero{
@@ -293,6 +299,93 @@
   .submit-btn.loading .btn-text{opacity:0.7;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
+  /* ---------- STATS ---------- */
+  .stats-section{background:var(--paper-2);}
+  .stats-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);
+    border-radius:4px;overflow:hidden;
+  }
+  .stat-card{background:var(--paper);padding:28px 22px;}
+  .stat-card .stat-num{
+    font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--pin);
+    line-height:1;margin-bottom:10px;
+  }
+  .stat-card p{font-size:13px;line-height:1.5;color:var(--ink-soft);margin:0;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .process{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .process-step{position:relative;padding-left:0;}
+  .process-step .pstep-num{
+    font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--paper-2);
+    -webkit-text-stroke:1.5px var(--pin);color:transparent;
+    line-height:1;margin-bottom:10px;
+  }
+  .process-step h3{
+    font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:17px;
+    margin-bottom:8px;color:var(--ink);
+  }
+  .process-step p{font-size:14px;line-height:1.55;color:var(--ink-soft);margin:0;}
+  .process-arrow{
+    display:none;
+  }
+
+  /* ---------- PRICING ---------- */
+  .pricing-section{background:var(--paper-2);}
+  .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .price-card{
+    background:var(--paper);border:1.5px solid var(--line);border-radius:6px;
+    padding:28px 24px;position:relative;
+  }
+  .price-card.popular{border-color:var(--pin);border-width:2px;}
+  .price-badge{
+    position:absolute;top:-12px;right:20px;
+    background:var(--pin);color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;
+    letter-spacing:0.05em;padding:5px 12px;border-radius:12px;text-transform:uppercase;
+  }
+  .price-name{font-family:'Bebas Neue',sans-serif;font-size:24px;margin-bottom:2px;}
+  .price-amt{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--pin);}
+  .price-freq{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);margin-bottom:4px;}
+  .price-annual{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--found);font-weight:600;margin-bottom:16px;}
+  .price-card ul{list-style:none;margin:0 0 16px;padding:0;}
+  .price-card ul li{
+    font-size:13.5px;color:var(--ink);padding:6px 0 6px 20px;position:relative;line-height:1.4;
+  }
+  .price-card ul li::before{
+    content:"+";position:absolute;left:0;color:var(--pin);font-weight:700;
+  }
+  .price-best{
+    font-size:12px;color:var(--ink-soft);font-style:italic;
+    border-top:1px solid var(--line);padding-top:12px;margin-top:14px;
+  }
+  .pricing-note{
+    text-align:center;font-family:'IBM Plex Mono',monospace;font-size:13px;
+    color:var(--ink-soft);margin-top:32px;
+  }
+  .pricing-note a{color:var(--pin);text-decoration:underline;}
+
+  /* ---------- WHY THIS WORKS ---------- */
+  .proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;}
+  .proof-col .proof-title{
+    font-size:16px;font-weight:600;margin-bottom:8px;
+    border-bottom:2px solid var(--pin);padding-bottom:8px;
+  }
+  .proof-col p{font-size:14px;line-height:1.6;color:var(--ink-soft);margin:0;}
+
+  /* ---------- FAQ ---------- */
+  .faq-section{background:var(--paper-2);}
+  .faq-list{max-width:760px;}
+  .faq-item{
+    border-bottom:1px solid var(--line);
+    padding:22px 0;
+  }
+  .faq-item:first-child{padding-top:0;}
+  .faq-q{
+    font-size:16px;font-weight:600;margin-bottom:8px;color:var(--ink);
+  }
+  .faq-a{font-size:14px;line-height:1.6;color:var(--ink-soft);margin:0;}
+
   /* ---------- FOOTER ---------- */
   footer{
     background:var(--asphalt);color:#8B8F9C;
@@ -307,6 +400,11 @@
     .checklist{grid-template-columns:repeat(2,1fr);}
     .field-row{flex-direction:column;gap:0;}
     .header-cta{display:none;}
+    .nav-links{display:none;}
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+    .process{grid-template-columns:1fr;gap:32px;}
+    .pricing-grid{grid-template-columns:1fr;}
+    .proof-grid{grid-template-columns:1fr;gap:24px;}
   }
 </style>
 </head>
@@ -315,6 +413,11 @@
 <header>
   <div class="header-row">
     <div class="wordmark"><span class="dot"></span>ON&nbsp;THE&nbsp;MAP</div>
+    <div class="nav-links">
+      <a href="#how-it-works">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
     <a class="header-cta" href="#audit">Get my free audit</a>
   </div>
 </header>
@@ -372,6 +475,184 @@
         <div class="num mono">04</div>
         <h3>Quick wins</h3>
         <p>Three specific, do-this-first fixes — not a 40-page report you'll never open.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section stats-section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">Why now</div>
+        <h2>Local search decides who gets the call</h2>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">46%</div>
+        <p>of all Google searches carry local intent — nearly half of everything typed into Google is someone looking for something nearby.</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">76%</div>
+        <p>of "near me" searches lead to a visit within 24 hours. This isn't browsing — it's someone ready to buy, right now.</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">35%</div>
+        <p>of small businesses don't even have a Google Business Profile set up — a huge, mostly invisible gap in a crowded market.</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">44%</div>
+        <p>of businesses show up in the map pack for their own primary search term. More than half don't.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how-it-works">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">The process</div>
+        <h2>How it works</h2>
+      </div>
+    </div>
+    <div class="process">
+      <div class="process-step">
+        <div class="pstep-num">01</div>
+        <h3>Free audit</h3>
+        <p>Submit your business above and get a real, specific audit in about 60 seconds — no guesswork, no generic checklist.</p>
+      </div>
+      <div class="process-step">
+        <div class="pstep-num">02</div>
+        <h3>We fix it</h3>
+        <p>Category corrections, profile completeness, photos, review requests, citation cleanup — the fundamentals, done for you.</p>
+      </div>
+      <div class="process-step">
+        <div class="pstep-num">03</div>
+        <h3>We keep it growing</h3>
+        <p>Monthly rank tracking, weekly posts, ongoing review management — visibility that doesn't fade 60 days later.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section pricing-section" id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">Simple, no ranges</div>
+        <h2>Services &amp; pricing</h2>
+      </div>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Foundation</div>
+        <div class="price-amt">$1,000</div>
+        <div class="price-freq">ONE-TIME</div>
+        <ul>
+          <li>Full profile audit</li>
+          <li>Category correction</li>
+          <li>Complete every profile field</li>
+          <li>Photo upload &amp; organization</li>
+          <li>Service menu build</li>
+          <li>Citation cleanup</li>
+        </ul>
+        <div class="price-best">Best for: getting the fundamentals right, fast.</div>
+      </div>
+      <div class="price-card popular">
+        <div class="price-badge">Most popular</div>
+        <div class="price-name">Growth</div>
+        <div class="price-amt">$700</div>
+        <div class="price-freq">PER MONTH</div>
+        <div class="price-annual">Or $7,000/yr — save $1,400</div>
+        <ul>
+          <li>Everything in Foundation</li>
+          <li>Monthly posting cadence</li>
+          <li>Review requests &amp; responses</li>
+          <li>Q&amp;A seeding</li>
+          <li>Monthly photo refresh</li>
+          <li>Rank tracking + monthly report</li>
+          <li>Citation monitoring</li>
+        </ul>
+        <div class="price-best">Best for: ongoing visibility &amp; steady lead flow.</div>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Dominate</div>
+        <div class="price-amt">$1,800</div>
+        <div class="price-freq">PER MONTH, STARTING</div>
+        <div class="price-annual">Or $18,000/yr — save $3,600</div>
+        <ul>
+          <li>Everything in Growth</li>
+          <li>Multiple locations, one plan</li>
+          <li>Competitor gap analysis</li>
+          <li>Website + on-page SEO sync</li>
+          <li>Dedicated strategy call</li>
+        </ul>
+        <div class="price-best">Best for: multi-location or competitive markets. Additional locations quoted per site.</div>
+      </div>
+    </div>
+    <div class="pricing-note">Month-to-month, no long-term contract. Not sure which fits? <a href="#audit">Run your free audit first</a> — we'll recommend a tier based on what we find.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">Why this works</div>
+        <h2>Not another SEO pitch</h2>
+      </div>
+    </div>
+    <div class="proof-grid">
+      <div class="proof-col">
+        <div class="proof-title">Not guesswork</div>
+        <p>You get a real, specific audit of your own profile before you ever talk to us — every fix maps to something we actually found, not a canned pitch.</p>
+      </div>
+      <div class="proof-col">
+        <div class="proof-title">Fundamentals first</div>
+        <p>Category accuracy is the single most influential controllable ranking factor — and the one almost every neglected profile gets wrong. We fix that first.</p>
+      </div>
+      <div class="proof-col">
+        <div class="proof-title">Built to last</div>
+        <p>This isn't a one-time trick. Reviews, posts, and photos need to stay fresh — we keep your profile active so the fix doesn't fade in 60 days.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section faq-section" id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">Questions</div>
+        <h2>Before you ask</h2>
+      </div>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">How fast will I see results?</div>
+        <p class="faq-a">Distance from the searcher isn't something we can change, but relevance and prominence are. Most clients see profile improvements within days — rank movement typically follows over 6&ndash;12 weeks as Google re-weighs the fresh signals.</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is there a contract?</div>
+        <p class="faq-a">No long-term contract — month-to-month by default on Growth and Dominate. Prefer to prepay? Annual billing saves you 2 months.</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What if I don't have a Google Business Profile yet?</div>
+        <p class="faq-a">That's actually a cleaner starting point in some ways &mdash; no bad history or stale data to undo. We build it right from day one.</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What's the difference between the tiers?</div>
+        <p class="faq-a">Foundation is a one-time fix of the fundamentals. Growth adds ongoing management &mdash; posting, reviews, tracking. Dominate is Growth scaled for multiple locations or a highly competitive market.</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Will I have to do anything technical?</div>
+        <p class="faq-a">No. We just need Manager access to your Google Business Profile &mdash; about a 2-minute setup on your end. We handle everything else.</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do you work outside Omaha?</div>
+        <p class="faq-a">We're currently focused on the Omaha metro to keep quality high as we grow. If you're elsewhere, reach out anyway &mdash; happy to talk.</p>
       </div>
     </div>
   </div>
