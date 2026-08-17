@@ -183,7 +183,8 @@
 
   function render(records){
     const buckets = { lead: [], active: [], paused: [] };
-    records.forEach(r => {
+    records.forEach(rec => {
+      const r = Object.assign({ key: rec.key }, rec.data || {});
       const status = (r.status || 'lead').toLowerCase();
       if (buckets[status]) buckets[status].push(r);
       else buckets.lead.push(r);
