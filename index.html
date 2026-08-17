@@ -57,7 +57,7 @@
     display:flex;align-items:center;
   }
   .wordmark img{
-    height:26px;width:auto;display:block;
+    height:36px;width:auto;display:block;
   }
   .header-cta{
     font-family:'IBM Plex Mono',monospace;
@@ -93,6 +93,15 @@
     background-size:64px 64px;
     opacity:0.35;
     mask-image:radial-gradient(ellipse at 30% 20%, black 0%, transparent 65%);
+  }
+  .hero-mark{
+    position:absolute;
+    top:50%;right:-60px;
+    transform:translateY(-50%);
+    height:560px;width:auto;
+    opacity:0.05;
+    z-index:1;
+    pointer-events:none;
   }
   .hero-inner{position:relative;z-index:2;}
   .eyebrow{
@@ -223,7 +232,9 @@
     font-family:'IBM Plex Mono',monospace;
     font-size:12px;letter-spacing:0.1em;text-transform:uppercase;
     color:var(--ink-soft);
+    display:flex;align-items:center;gap:8px;
   }
+  .section-eyebrow img{height:14px;width:auto;display:block;}
   .section-head h2{font-size:clamp(30px,4vw,44px);}
   .checklist{
     display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
@@ -259,7 +270,8 @@
     display:flex;justify-content:space-between;align-items:center;
     border-bottom:2px dashed #3B3F4A;
   }
-  .ticket-head .t1{font-family:'Bebas Neue',sans-serif;font-size:24px;}
+  .ticket-head .t1{font-family:'Bebas Neue',sans-serif;font-size:24px;display:flex;align-items:center;gap:10px;}
+  .ticket-head .t1 img{height:22px;width:auto;display:block;}
   .ticket-head .t2{
     font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8B8F9C;
     text-align:right;
@@ -438,6 +450,7 @@
 </header>
 
 <section class="hero">
+  <img class="hero-mark" src="/assets/logo-icon.png" alt="">
   <div class="wrap hero-inner">
     <div class="eyebrow">Free Google Business Profile audit</div>
     <h1>Right now, are you even <em>in the room?</em></h1>
@@ -488,7 +501,7 @@
   <div class="wrap">
     <div class="section-head">
       <div>
-        <div class="section-eyebrow">The audit</div>
+        <div class="section-eyebrow"><img src="/assets/logo-icon.png" alt="">The audit</div>
         <h2>What we actually check</h2>
       </div>
     </div>
@@ -521,7 +534,7 @@
   <div class="wrap">
     <div class="section-head">
       <div>
-        <div class="section-eyebrow">Why now</div>
+        <div class="section-eyebrow"><img src="/assets/logo-icon.png" alt="">Why now</div>
         <h2>Local search decides who gets the call</h2>
       </div>
     </div>
@@ -550,7 +563,7 @@
   <div class="wrap">
     <div class="section-head">
       <div>
-        <div class="section-eyebrow">The process</div>
+        <div class="section-eyebrow"><img src="/assets/logo-icon.png" alt="">The process</div>
         <h2>How it works</h2>
       </div>
     </div>
@@ -578,7 +591,7 @@
   <div class="wrap">
     <div class="section-head">
       <div>
-        <div class="section-eyebrow">Simple, no ranges</div>
+        <div class="section-eyebrow"><img src="/assets/logo-icon.png" alt="">Simple, no ranges</div>
         <h2>Services &amp; pricing</h2>
       </div>
     </div>
@@ -637,7 +650,7 @@
   <div class="wrap">
     <div class="section-head">
       <div>
-        <div class="section-eyebrow">Why this works</div>
+        <div class="section-eyebrow"><img src="/assets/logo-icon.png" alt="">Why this works</div>
         <h2>Not another SEO pitch</h2>
       </div>
     </div>
@@ -662,7 +675,7 @@
   <div class="wrap">
     <div class="section-head">
       <div>
-        <div class="section-eyebrow">Questions</div>
+        <div class="section-eyebrow"><img src="/assets/logo-icon.png" alt="">Questions</div>
         <h2>Before you ask</h2>
       </div>
     </div>
@@ -699,14 +712,14 @@
   <div class="wrap">
     <div class="section-head" style="margin-bottom:32px;">
       <div>
-        <div class="section-eyebrow">Takes about 60 seconds</div>
+        <div class="section-eyebrow"><img src="/assets/logo-icon.png" alt="">Takes about 60 seconds</div>
         <h2>Get your audit</h2>
       </div>
     </div>
 
     <div class="ticket">
       <div class="ticket-head">
-        <div class="t1">Audit request</div>
+        <div class="t1"><img src="/assets/logo-icon.png" alt="">Audit request</div>
         <div class="t2">FORM&nbsp;NO.&nbsp;PR-01<br>NO&nbsp;COST</div>
       </div>
       <div class="ticket-body">
