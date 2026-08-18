@@ -97,6 +97,17 @@
   .convert-form textarea{resize:vertical;min-height:50px;}
   .convert-form .kw-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 
+  .edit-form{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:none;}
+  .edit-form.show{display:block;}
+  .edit-form label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);margin-bottom:4px;margin-top:10px;}
+  .edit-form input,.edit-form textarea{
+    width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:3px;
+    font-family:'IBM Plex Sans',sans-serif;font-size:13px;background:#FCFBF8;color:var(--ink);
+  }
+  .edit-form textarea{resize:vertical;min-height:50px;}
+  .edit-form .kw-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .edit-form .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
   .toast{
     position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
     background:var(--asphalt);color:var(--paper);padding:12px 22px;border-radius:4px;
@@ -220,12 +231,15 @@
     let actions = '';
     if (status === 'lead') {
       actions = `<button class="btn primary" onclick="toggleConvert('${r.key}')">Convert to Active</button>
+                 <button class="btn" onclick="toggleEdit('${r.key}')">Edit</button>
                  <button class="btn danger" onclick="doDelete('${r.key}','${esc(r.business_name)}')">Delete</button>`;
     } else if (status === 'active') {
       actions = `<button class="btn" onclick="setStatus('${r.key}','paused')">Pause</button>
+                 <button class="btn" onclick="toggleEdit('${r.key}')">Edit</button>
                  <button class="btn danger" onclick="doDelete('${r.key}','${esc(r.business_name)}')">Delete</button>`;
     } else if (status === 'paused') {
       actions = `<button class="btn primary" onclick="setStatus('${r.key}','active')">Reactivate</button>
+                 <button class="btn" onclick="toggleEdit('${r.key}')">Edit</button>
                  <button class="btn danger" onclick="doDelete('${r.key}','${esc(r.business_name)}')">Delete</button>`;
     }
 
@@ -235,6 +249,7 @@
       ${flag}
       <div class="card-actions">${actions}</div>
       ${status === 'lead' ? buildConvertForm(r) : ''}
+      ${buildEditForm(r)}
     `;
     return card;
   }
@@ -262,6 +277,69 @@
 
   function toggleConvert(key){
     document.getElementById('convert-' + key).classList.toggle('show');
+  }
+
+  function buildEditForm(r){
+    return `
+      <div class="edit-form" id="edit-${r.key}">
+        <label>Business name</label>
+        <input id="e-name-${r.key}" value="${esc(r.business_name)}">
+        <div class="two-col">
+          <div>
+            <label>Address</label>
+            <input id="e-addr-${r.key}" value="${esc(r.address)}">
+          </div>
+          <div>
+            <label>Client email</label>
+            <input id="e-email-${r.key}" value="${esc(r.client_email)}">
+          </div>
+        </div>
+        <label>Google Place ID</label>
+        <input id="e-pid-${r.key}" value="${esc(r.place_id)}" placeholder="ChIJ...">
+        <label>Industry context</label>
+        <textarea id="e-ic-${r.key}">${esc(r.industry_context)}</textarea>
+        <label>Brand voice notes</label>
+        <textarea id="e-bv-${r.key}">${esc(r.brand_voice)}</textarea>
+        <label>Tracked keywords</label>
+        <div class="kw-row">
+          <input placeholder="Keyword 1" id="e-k1-${r.key}" value="${esc(r.keyword_1)}">
+          <input placeholder="Keyword 2" id="e-k2-${r.key}" value="${esc(r.keyword_2)}">
+          <input placeholder="Keyword 3" id="e-k3-${r.key}" value="${esc(r.keyword_3)}">
+          <input placeholder="Keyword 4" id="e-k4-${r.key}" value="${esc(r.keyword_4)}">
+        </div>
+        <div class="card-actions" style="margin-top:14px;">
+          <button class="btn primary" onclick="doEdit('${r.key}')">Save Changes</button>
+          <button class="btn" onclick="toggleEdit('${r.key}')">Cancel</button>
+        </div>
+      </div>`;
+  }
+
+  function toggleEdit(key){
+    document.getElementById('edit-' + key).classList.toggle('show');
+  }
+
+  async function doEdit(recordKey){
+    const body = {
+      action: 'update_fields',
+      record_key: recordKey,
+      business_name: document.getElementById('e-name-' + recordKey).value,
+      address: document.getElementById('e-addr-' + recordKey).value,
+      client_email: document.getElementById('e-email-' + recordKey).value,
+      place_id: document.getElementById('e-pid-' + recordKey).value,
+      industry_context: document.getElementById('e-ic-' + recordKey).value,
+      brand_voice: document.getElementById('e-bv-' + recordKey).value,
+      keyword_1: document.getElementById('e-k1-' + recordKey).value,
+      keyword_2: document.getElementById('e-k2-' + recordKey).value,
+      keyword_3: document.getElementById('e-k3-' + recordKey).value,
+      keyword_4: document.getElementById('e-k4-' + recordKey).value
+    };
+    try {
+      await postUpdate(body);
+      showToast('Changes saved.');
+      loadClients();
+    } catch (err) {
+      showToast("Couldn't save: " + err.message, true);
+    }
   }
 
   async function postUpdate(body){
