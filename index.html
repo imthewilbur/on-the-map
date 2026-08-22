@@ -434,6 +434,7 @@
     .proof-grid{grid-template-columns:1fr;gap:24px;}
   }
 </style>
+<script src="https://www.google.com/recaptcha/api.js?render=6LcLhpItAAAAAJMqOPvhZ8_lLzyIS2pglK_BxlpE"></script>
 </head>
 <body>
 
@@ -796,11 +797,20 @@
     btnText.textContent = 'Sending...';
 
     try {
+      // Get an invisible reCAPTCHA v3 token — no puzzle, no user-visible
+      // step. Make verifies this server-side before doing anything
+      // expensive (Places lookup, Claude, email).
+      const token = await new Promise((resolve, reject) => {
+        grecaptcha.ready(function(){
+          grecaptcha.execute('6LcLhpItAAAAAJMqOPvhZ8_lLzyIS2pglK_BxlpE', {action: 'submit'}).then(resolve, reject);
+        });
+      });
+
       // URLSearchParams sends as application/x-www-form-urlencoded, which
       // avoids a CORS preflight AND Make parses it into fields natively
       // (unlike a JSON string sent with a non-JSON content-type, which
       // Make silently fails to parse).
-      const body = new URLSearchParams({ business_name, address, email });
+      const body = new URLSearchParams({ business_name, address, email, recaptcha_token: token });
       await fetch(WEBHOOK_URL, {
         method: 'POST',
         body: body
