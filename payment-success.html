@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Received — Pack Rank</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --asphalt:#15171C; --paper:#F3F0E8; --paper-2:#EAE5D8;
+    --pin:#E8542A; --pin-dark:#C7431D; --found:#2F8F5B;
+    --ink:#15171C; --ink-soft:#5B5F6B; --line:rgba(21,23,28,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;min-height:100vh;background:var(--paper);color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;
+  }
+  h1,h2{font-family:'Bebas Neue',sans-serif;letter-spacing:0.01em;margin:0;line-height:1;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  header{background:var(--asphalt);padding:20px 28px;}
+  .wordmark img{height:30px;display:block;}
+
+  .wrap{
+    flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px;
+  }
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:8px;
+    max-width:480px;width:100%;padding:44px 36px 36px;text-align:center;
+    box-shadow:0 24px 60px -32px rgba(21,23,28,0.35);
+  }
+  .check{
+    width:64px;height:64px;border-radius:50%;background:var(--found);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 22px;
+  }
+  .check svg{width:30px;height:30px;}
+  h1{font-size:32px;margin-bottom:10px;}
+  .sub{font-size:15px;color:var(--ink-soft);line-height:1.55;margin-bottom:28px;}
+  .next-box{
+    background:var(--paper-2);border-radius:6px;padding:20px 22px;text-align:left;margin-bottom:26px;
+  }
+  .next-box .label{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:0.06em;color:var(--ink-soft);margin-bottom:10px;
+  }
+  .next-box ol{margin:0;padding-left:18px;}
+  .next-box li{font-size:13.5px;line-height:1.6;color:var(--ink);margin-bottom:6px;}
+  .next-box li:last-child{margin-bottom:0;}
+  .note{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);line-height:1.6;
+  }
+  .note a{color:var(--pin);text-decoration:underline;}
+
+  footer{
+    background:var(--asphalt);color:#8B8F9C;padding:16px 28px;text-align:center;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="wordmark"><img src="assets/logo.png" alt="Pack Rank"></a>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="check">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 13l4 4L19 7" stroke="#F3F0E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1>Payment Received</h1>
+    <p class="sub">You're all set on our end &mdash; thanks for getting started with Pack Rank. A confirmation and setup email is already on its way to your inbox.</p>
+
+    <div class="next-box">
+      <div class="label">What happens next</div>
+      <ol>
+        <li>Check your email for a message from Pack Rank with a link to grant us Manager access to your Google Business Profile (about 2 minutes).</li>
+        <li>Once we're connected, we'll run your full setup &mdash; category correction, profile completeness, photos, and citation cleanup.</li>
+        <li>You'll get your first rank report and ongoing updates automatically from there.</li>
+      </ol>
+    </div>
+
+    <div class="note">Don't see the email in a few minutes? Check spam/promotions, or reply to any prior message from us &mdash; we'll sort it out.</div>
+  </div>
+</div>
+
+<footer>PACK RANK &mdash; LOCAL VISIBILITY, DONE FOR YOU.</footer>
+
+</body>
+</html>
