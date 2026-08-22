@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tell Us About Your Business — Pack Rank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --asphalt:#15171C; --paper:#F3F0E8; --paper-2:#EAE5D8;
+    --pin:#E8542A; --pin-dark:#C7431D; --ink:#15171C; --ink-soft:#5B5F6B; --line:rgba(21,23,28,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;}
+  h1,h2{font-family:'Bebas Neue',sans-serif;letter-spacing:0.01em;margin:0;line-height:1;}
+  header{background:var(--asphalt);padding:20px 28px;}
+  .wordmark img{height:30px;display:block;}
+  .wrap{max-width:640px;margin:0 auto;padding:40px 24px 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--pin);margin-bottom:8px;}
+  h1{font-size:clamp(28px,4vw,38px);margin-bottom:10px;}
+  .sub{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin-bottom:32px;}
+  .biz-name{font-weight:600;color:var(--ink);}
+
+  .ticket{background:#fff;border:1px solid var(--line);border-radius:6px;padding:32px;box-shadow:0 18px 40px -28px rgba(21,23,28,0.35);}
+  .field{margin-bottom:22px;}
+  .field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+  .field .hint{font-size:12.5px;color:var(--ink-soft);margin-top:5px;line-height:1.5;}
+  .field input, .field textarea{
+    width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:3px;
+    font-family:'IBM Plex Sans',sans-serif;font-size:14px;background:#FCFBF8;color:var(--ink);
+  }
+  .field textarea{resize:vertical;min-height:70px;}
+  .field input:focus, .field textarea:focus{outline:none;border-color:var(--pin);}
+
+  .section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--pin);margin:30px 0 14px;border-top:1px solid var(--line);padding-top:24px;}
+  .section-label:first-child{margin-top:0;border-top:none;padding-top:0;}
+
+  .kw-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+  .kw-row span{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);width:18px;}
+
+  .submit-btn{width:100%;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14.5px;background:var(--pin);color:var(--paper);border:none;padding:15px;border-radius:3px;cursor:pointer;}
+  .submit-btn:hover{background:var(--pin-dark);}
+  .submit-btn:disabled{background:#B9BCC4;}
+
+  .msg{margin-top:16px;padding:14px 16px;border-radius:3px;font-size:14px;display:none;}
+  .msg.show{display:block;}
+  .msg.success{background:rgba(47,143,91,0.1);color:#1E6640;border:1px solid rgba(47,143,91,0.3);}
+  .msg.error{background:rgba(199,67,29,0.08);color:var(--pin-dark);border:1px solid rgba(199,67,29,0.3);}
+
+  .missing-key{text-align:center;padding:60px 24px;}
+  .missing-key p{color:var(--ink-soft);font-size:14px;}
+</style>
+</head>
+<body>
+
+<header><a href="/" class="wordmark"><img src="assets/logo.png" alt="Pack Rank"></a></header>
+
+<div class="wrap">
+  <div id="formArea" style="display:none;">
+    <div class="eyebrow">Almost there</div>
+    <h1>Tell us about your business</h1>
+    <p class="sub">Thanks for getting started with Pack Rank<span id="bizNameSpan">.</span> A few quick questions so we can write accurate posts, review responses, and reports for <span class="biz-name" id="bizNameInline">your business</span> from day one.</p>
+
+    <div class="ticket">
+      <form id="onboardForm" novalidate>
+
+        <div class="section-label">About Your Business</div>
+        <div class="field">
+          <label for="industry_context">Services &amp; specialties</label>
+          <textarea id="industry_context" required placeholder="e.g. Family-owned HVAC company. We do AC/furnace repair, installation, and 24/7 emergency service. We're known for honest pricing and no upselling."></textarea>
+          <div class="hint">This is what we use to write accurate posts and reports about you — the more specific, the better.</div>
+        </div>
+        <div class="field">
+          <label for="brand_voice">How should we sound?</label>
+          <textarea id="brand_voice" required placeholder="e.g. Friendly and direct, never salesy. We talk to customers like neighbors, not like a call center."></textarea>
+          <div class="hint">A sentence or two on tone is plenty — think of how you'd want a new employee to talk to your customers.</div>
+        </div>
+
+        <div class="section-label">What Customers Search For</div>
+        <div class="field">
+          <label>Top search phrases (1 required, up to 5)</label>
+          <div class="hint" style="margin-bottom:12px;">What would someone type into Google to find a business like yours? Include your city if that's how people search — e.g. "plumber near me" or "brake repair Omaha."</div>
+          <div class="kw-row"><span>1</span><input id="keyword_1" required placeholder="e.g. hvac repair Omaha"></div>
+          <div class="kw-row"><span>2</span><input id="keyword_2" placeholder="Optional"></div>
+          <div class="kw-row"><span>3</span><input id="keyword_3" placeholder="Optional"></div>
+          <div class="kw-row"><span>4</span><input id="keyword_4" placeholder="Optional"></div>
+          <div class="kw-row"><span>5</span><input id="keyword_5" placeholder="Optional"></div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
+        <div class="msg" id="formMsg"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="missingKey" class="missing-key" style="display:none;">
+    <h2>This link looks incomplete</h2>
+    <p>Please use the exact link from your onboarding email, or reply to that email and we'll resend it.</p>
+  </div>
+</div>
+
+<script>
+  const WEBHOOK_URL = "https://hook.us2.make.com/1xe4bdspsp565c7pvwttbolkfr7v2d03";
+
+  const params = new URLSearchParams(window.location.search);
+  const recordKey = params.get('key');
+  const bizName = params.get('name') || '';
+
+  if (!recordKey) {
+    document.getElementById('missingKey').style.display = 'block';
+  } else {
+    document.getElementById('formArea').style.display = 'block';
+    if (bizName) {
+      document.getElementById('bizNameSpan').textContent = ', ' + bizName + '!';
+      document.getElementById('bizNameInline').textContent = bizName;
+    }
+  }
+
+  const form = document.getElementById('onboardForm');
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('formMsg');
+
+  function showMsg(text, type){
+    msg.textContent = text;
+    msg.className = 'msg show ' + type;
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    msg.className = 'msg';
+
+    const industry_context = document.getElementById('industry_context').value.trim();
+    const brand_voice = document.getElementById('brand_voice').value.trim();
+    const keyword_1 = document.getElementById('keyword_1').value.trim();
+
+    if (!industry_context || !brand_voice || !keyword_1) {
+      showMsg("Please fill in your services, brand voice, and at least one search phrase.", "error");
+      return;
+    }
+
+    const payload = {
+      record_key: recordKey,
+      business_name: bizName,
+      industry_context: industry_context,
+      brand_voice: brand_voice,
+      keyword_1: keyword_1,
+      keyword_2: document.getElementById('keyword_2').value.trim(),
+      keyword_3: document.getElementById('keyword_3').value.trim(),
+      keyword_4: document.getElementById('keyword_4').value.trim(),
+      keyword_5: document.getElementById('keyword_5').value.trim()
+    };
+
+    btn.disabled = true; btn.textContent = "Submitting...";
+
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        body: new URLSearchParams(payload)
+      });
+      showMsg("Thanks! We've got everything we need to get started.", "success");
+      form.reset();
+      form.style.display = 'none';
+    } catch (err) {
+      showMsg("Something went wrong sending that. Mind trying again in a moment?", "error");
+      btn.disabled = false; btn.textContent = "Submit";
+    }
+  });
+</script>
+
+</body>
+</html>
