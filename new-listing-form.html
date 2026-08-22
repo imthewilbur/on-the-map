@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set Up Your Google Business Profile — Pack Rank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --asphalt:#15171C; --paper:#F3F0E8; --paper-2:#EAE5D8;
+    --pin:#E8542A; --pin-dark:#C7431D; --ink:#15171C; --ink-soft:#5B5F6B; --line:rgba(21,23,28,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;}
+  h1,h2{font-family:'Bebas Neue',sans-serif;letter-spacing:0.01em;margin:0;line-height:1;}
+  header{background:var(--asphalt);padding:20px 28px;}
+  .wordmark img{height:30px;display:block;}
+  .wrap{max-width:640px;margin:0 auto;padding:40px 24px 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--pin);margin-bottom:8px;}
+  h1{font-size:clamp(26px,4vw,36px);margin-bottom:10px;}
+  .sub{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin-bottom:24px;}
+  .biz-name{font-weight:600;color:var(--ink);}
+
+  .note{background:var(--paper-2);border-left:4px solid var(--pin);padding:14px 18px;font-size:13px;color:var(--ink-soft);line-height:1.55;margin-bottom:28px;}
+
+  .ticket{background:#fff;border:1px solid var(--line);border-radius:6px;padding:32px;box-shadow:0 18px 40px -28px rgba(21,23,28,0.35);}
+  .field{margin-bottom:22px;}
+  .field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+  .field .hint{font-size:12.5px;color:var(--ink-soft);margin-top:5px;line-height:1.5;}
+  .field input, .field textarea{
+    width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:3px;
+    font-family:'IBM Plex Sans',sans-serif;font-size:14px;background:#FCFBF8;color:var(--ink);
+  }
+  .field textarea{resize:vertical;min-height:70px;}
+  .field input:focus, .field textarea:focus{outline:none;border-color:var(--pin);}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:520px){.two-col{grid-template-columns:1fr;}}
+
+  .submit-btn{width:100%;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14.5px;background:var(--pin);color:var(--paper);border:none;padding:15px;border-radius:3px;cursor:pointer;}
+  .submit-btn:hover{background:var(--pin-dark);}
+  .submit-btn:disabled{background:#B9BCC4;}
+
+  .msg{margin-top:16px;padding:14px 16px;border-radius:3px;font-size:14px;display:none;}
+  .msg.show{display:block;}
+  .msg.success{background:rgba(47,143,91,0.1);color:#1E6640;border:1px solid rgba(47,143,91,0.3);}
+  .msg.error{background:rgba(199,67,29,0.08);color:var(--pin-dark);border:1px solid rgba(199,67,29,0.3);}
+
+  .missing-key{text-align:center;padding:60px 24px;}
+  .missing-key p{color:var(--ink-soft);font-size:14px;}
+</style>
+</head>
+<body>
+
+<header><a href="/" class="wordmark"><img src="assets/logo.png" alt="Pack Rank"></a></header>
+
+<div class="wrap">
+  <div id="formArea" style="display:none;">
+    <div class="eyebrow">Building your listing</div>
+    <h1>Set up your Google Business Profile</h1>
+    <p class="sub">Since <span class="biz-name" id="bizNameInline">your business</span> doesn't have a Google listing yet, we're building one from scratch for you. A few details and we'll take it from here.</p>
+
+    <div class="note">One thing worth knowing: after we create your listing, Google requires a quick verification step on your end (usually a postcard, phone call, or video) to confirm you're the real owner. That part can't be skipped or automated on our end &mdash; we'll walk you through it when it comes up.</div>
+
+    <div class="ticket">
+      <form id="listingForm" novalidate>
+
+        <div class="field">
+          <label for="listing_category">What type of business is this?</label>
+          <input id="listing_category" required placeholder="e.g. HVAC contractor, dentist, coffee shop">
+          <div class="hint">Be as specific as you can &mdash; Google's category matters a lot for how you show up in search.</div>
+        </div>
+
+        <div class="two-col">
+          <div class="field">
+            <label for="listing_phone">Business phone number</label>
+            <input id="listing_phone" type="tel" required placeholder="(555) 123-4567">
+          </div>
+          <div class="field">
+            <label for="listing_website">Website (if you have one)</label>
+            <input id="listing_website" placeholder="yourbusiness.com">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="listing_hours">Hours of operation</label>
+          <textarea id="listing_hours" required placeholder="e.g. Mon-Fri 8am-5pm, Sat 9am-1pm, Closed Sunday"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="listing_description">Short business description</label>
+          <textarea id="listing_description" required placeholder="A couple sentences on what you do and what makes you different &mdash; this is what customers see on your profile."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
+        <div class="msg" id="formMsg"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="missingKey" class="missing-key" style="display:none;">
+    <h2>This link looks incomplete</h2>
+    <p>Please use the exact link from your email, or reply and we'll resend it.</p>
+  </div>
+</div>
+
+<script>
+  const WEBHOOK_URL = "https://hook.us2.make.com/1t1w3woy8vvsbo1swn7k4ekx3f66tg2c";
+
+  const params = new URLSearchParams(window.location.search);
+  const recordKey = params.get('key');
+  const bizName = params.get('name') || '';
+  const bizAddress = params.get('address') || '';
+
+  if (!recordKey) {
+    document.getElementById('missingKey').style.display = 'block';
+  } else {
+    document.getElementById('formArea').style.display = 'block';
+    if (bizName) document.getElementById('bizNameInline').textContent = bizName;
+  }
+
+  const form = document.getElementById('listingForm');
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('formMsg');
+
+  function showMsg(text, type){
+    msg.textContent = text;
+    msg.className = 'msg show ' + type;
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    msg.className = 'msg';
+
+    const listing_category = document.getElementById('listing_category').value.trim();
+    const listing_phone = document.getElementById('listing_phone').value.trim();
+    const listing_hours = document.getElementById('listing_hours').value.trim();
+    const listing_description = document.getElementById('listing_description').value.trim();
+
+    if (!listing_category || !listing_phone || !listing_hours || !listing_description) {
+      showMsg("Please fill in category, phone, hours, and a short description.", "error");
+      return;
+    }
+
+    const payload = {
+      record_key: recordKey,
+      business_name: bizName,
+      address: bizAddress,
+      listing_category: listing_category,
+      listing_phone: listing_phone,
+      listing_website: document.getElementById('listing_website').value.trim(),
+      listing_hours: listing_hours,
+      listing_description: listing_description
+    };
+
+    btn.disabled = true; btn.textContent = "Submitting...";
+
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        body: new URLSearchParams(payload)
+      });
+      showMsg("Thanks! We've got everything we need to get your listing built.", "success");
+      form.reset();
+      form.style.display = 'none';
+    } catch (err) {
+      showMsg("Something went wrong sending that. Mind trying again in a moment?", "error");
+      btn.disabled = false; btn.textContent = "Submit";
+    }
+  });
+</script>
+
+</body>
+</html>
