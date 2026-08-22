@@ -388,8 +388,12 @@
           <input placeholder="Keyword 3" id="k3-${r.key}">
           <input placeholder="Keyword 4" id="k4-${r.key}">
         </div>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:16px;cursor:pointer;">
+          <input type="checkbox" id="newlisting-${r.key}" style="width:auto;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);">This business needs a new Google Business Profile built (no existing listing)</span>
+        </label>
         <div class="card-actions" style="margin-top:14px;">
-          <button class="btn primary" onclick="doConvert('${r.key}','${esc(r.business_name)}','${esc(r.client_email)}')">Save & Activate</button>
+          <button class="btn primary" onclick="doConvert('${r.key}','${esc(r.business_name)}','${esc(r.client_email)}','${esc(r.address)}')">Save & Activate</button>
           <button class="btn" onclick="toggleConvert('${r.key}')">Cancel</button>
         </div>
       </div>`;
@@ -504,14 +508,17 @@
     dominate_annual:  { price_id: 'price_1U747Y20hOMOVUZEit2xWepv', mode: 'subscription', label: 'Dominate Annual ($18,000/yr)' }
   };
 
-  async function doConvert(recordKey, businessName, clientEmail){
+  async function doConvert(recordKey, businessName, clientEmail, address){
     const tierKey = document.getElementById('tier-' + recordKey).value;
     const tier = TIER_MAP[tierKey];
+    const needsNewListing = document.getElementById('newlisting-' + recordKey).checked;
     const body = {
       action: 'convert',
       record_key: recordKey,
       business_name: businessName,
       client_email: clientEmail,
+      address: address,
+      needs_new_listing: needsNewListing ? 'yes' : '',
       price_id: tier.price_id,
       mode: tier.mode,
       tier_label: tier.label,
