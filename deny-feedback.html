@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback — Pack Rank</title>
+<meta name="color-scheme" content="light only">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --asphalt:#15171C; --paper:#F3F0E8; --paper-2:#EAE5D8;
+    --pin:#E8542A; --pin-dark:#C7431D; --found:#2F8F5B; --ink:#15171C; --ink-soft:#5B5F6B; --line:rgba(21,23,28,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;color-scheme:light;}
+  h1,h2{font-family:'Bebas Neue',sans-serif;letter-spacing:0.01em;margin:0;line-height:1;}
+  header{background:var(--asphalt);padding:20px 28px;}
+  .wordmark img{height:30px;display:block;}
+  .wrap{max-width:600px;margin:0 auto;padding:40px 24px 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--pin);margin-bottom:8px;}
+  h1{font-size:clamp(24px,4vw,32px);margin-bottom:10px;}
+  .sub{font-size:14px;color:var(--ink-soft);line-height:1.55;margin-bottom:26px;}
+
+  .original-box{background:var(--paper-2);border-radius:5px;padding:16px 18px;margin-bottom:22px;font-size:13.5px;line-height:1.55;}
+  .original-box .label{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);margin-bottom:6px;}
+
+  .ticket{background:#fff;border:1px solid var(--line);border-radius:6px;padding:28px;box-shadow:0 18px 40px -28px rgba(21,23,28,0.35);}
+  .field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+  .field textarea{
+    width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:3px;
+    font-family:'IBM Plex Sans',sans-serif;font-size:14px;background:#FCFBF8;color:var(--ink);resize:vertical;min-height:90px;
+  }
+  .field textarea:focus{outline:none;border-color:var(--pin);}
+
+  .submit-btn{width:100%;margin-top:16px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;background:var(--pin);color:var(--paper);border:none;padding:14px;border-radius:3px;cursor:pointer;}
+  .submit-btn:hover{background:var(--pin-dark);}
+  .submit-btn:disabled{background:#B9BCC4;}
+
+  .msg{margin-top:14px;padding:12px 14px;border-radius:3px;font-size:13.5px;display:none;}
+  .msg.show{display:block;}
+  .msg.error{background:rgba(199,67,29,0.08);color:var(--pin-dark);border:1px solid rgba(199,67,29,0.3);}
+
+  .new-draft-box{background:#fff;border:1.5px solid var(--found);border-radius:5px;padding:18px 20px;margin-bottom:18px;font-size:14.5px;line-height:1.6;}
+  .new-draft-box .label{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:var(--found);margin-bottom:8px;}
+
+  .action-row{display:flex;gap:10px;}
+  .approve-link{
+    flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13.5px;
+    background:var(--found);color:#fff;text-decoration:none;padding:13px;border-radius:3px;
+  }
+  .deny-again-btn{
+    flex:1;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13.5px;
+    background:none;border:1.5px solid var(--line);color:var(--ink);padding:13px;border-radius:3px;cursor:pointer;
+  }
+
+  .missing-key{text-align:center;padding:60px 24px;}
+  .missing-key p{color:var(--ink-soft);font-size:14px;}
+</style>
+</head>
+<body>
+
+<header><a href="/" class="wordmark"><img src="assets/logo.png" alt="Pack Rank"></a></header>
+
+<div class="wrap">
+
+  <div id="missingKey" class="missing-key" style="display:none;">
+    <h2>This link looks incomplete</h2>
+    <p>Please use the exact link from your weekly email.</p>
+  </div>
+
+  <div id="feedbackArea" style="display:none;">
+    <div class="eyebrow">Quick feedback</div>
+    <h1 id="itemLabelHeading">Let us know what to change</h1>
+    <p class="sub">Tell us what didn't work and we'll generate a new version right away &mdash; no need to start over.</p>
+
+    <div class="ticket">
+      <form id="feedbackForm" novalidate>
+        <div class="field">
+          <label for="reason">What should be different?</label>
+          <textarea id="reason" required placeholder="e.g. Too formal, mention our 10% off promo instead, shorter please"></textarea>
+        </div>
+        <button type="submit" class="submit-btn" id="submitBtn">Regenerate</button>
+        <div class="msg" id="formMsg"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="resultArea" style="display:none;">
+    <div class="eyebrow">Here's a new version</div>
+    <h1>Take a look</h1>
+    <p class="sub">Generated using your feedback. Approve it, or tell us more if it's still not right.</p>
+
+    <div class="new-draft-box">
+      <div class="label">New draft</div>
+      <div id="newDraftText"></div>
+    </div>
+
+    <div class="action-row">
+      <a href="#" id="approveLink" class="approve-link">Approve This Version</a>
+      <button class="deny-again-btn" id="denyAgainBtn">Still Not Right</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const DENY_URL = "https://hook.us2.make.com/ciw3ehejr9gvxcp279qqihe0ar1deeeu";
+  const APPROVE_URL = "https://hook.us2.make.com/eoj1e0wgt9qydkpiocinlevnkprtnthx";
+
+  const params = new URLSearchParams(window.location.search);
+  let itemKey = params.get('key');
+  const itemLabel = params.get('label') || '';
+
+  if (!itemKey) {
+    document.getElementById('missingKey').style.display = 'block';
+  } else {
+    document.getElementById('feedbackArea').style.display = 'block';
+    if (itemLabel) {
+      document.getElementById('itemLabelHeading').textContent = 'Let us know what to change — ' + itemLabel;
+    }
+  }
+
+  const form = document.getElementById('feedbackForm');
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('formMsg');
+
+  function showMsg(text){
+    msg.textContent = text;
+    msg.className = 'msg show error';
+  }
+
+  async function submitReason(reason){
+    btn.disabled = true; btn.textContent = "Regenerating...";
+    try {
+      const res = await fetch(DENY_URL, {
+        method: 'POST',
+        body: new URLSearchParams({ item_key: itemKey, reason: reason })
+      });
+      const result = await res.json();
+
+      document.getElementById('feedbackArea').style.display = 'none';
+      document.getElementById('resultArea').style.display = 'block';
+      document.getElementById('newDraftText').innerHTML = result.draft_content;
+      document.getElementById('approveLink').href = APPROVE_URL + '?key=' + encodeURIComponent(result.new_key);
+
+      itemKey = result.new_key;
+    } catch (err) {
+      showMsg("Something went wrong. Mind trying again in a moment?");
+      btn.disabled = false; btn.textContent = "Regenerate";
+    }
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    msg.className = 'msg';
+    const reason = document.getElementById('reason').value.trim();
+    if (!reason) {
+      showMsg("Let us know what you'd like changed.");
+      return;
+    }
+    submitReason(reason);
+  });
+
+  document.getElementById('denyAgainBtn').addEventListener('click', function(){
+    document.getElementById('resultArea').style.display = 'none';
+    document.getElementById('feedbackArea').style.display = 'block';
+    document.getElementById('reason').value = '';
+    btn.disabled = false; btn.textContent = "Regenerate";
+  });
+</script>
+
+</body>
+</html>
