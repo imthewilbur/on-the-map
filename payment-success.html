@@ -80,7 +80,7 @@
 
     <div class="next-box">
       <div class="label">What happens next</div>
-      <ol>
+      <ol id="stepsList">
         <li>Check your email for a message from Pack Rank with a link to grant us Manager access to your Google Business Profile (about 2 minutes).</li>
         <li>Once we're connected, we'll run your full setup &mdash; category correction, profile completeness, photos, and citation cleanup.</li>
         <li>You'll get your first rank report and ongoing updates automatically from there.</li>
@@ -92,6 +92,19 @@
 </div>
 
 <footer>PACK RANK &mdash; LOCAL VISIBILITY, DONE FOR YOU.</footer>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const needsNewListing = (params.get('new_listing') || '').toLowerCase().includes('yes');
+
+  if (needsNewListing) {
+    document.getElementById('stepsList').innerHTML = `
+      <li>Check your email for two quick forms &mdash; one telling us about your business, one with the details we need to build your Google Business Profile from scratch.</li>
+      <li>Once we have that, we'll create your listing and let you know when it's ready.</li>
+      <li>Google will ask you to verify the listing (usually a postcard, phone call, or video) before it goes live &mdash; we'll walk you through that step when it comes up.</li>
+    `;
+  }
+</script>
 
 </body>
 </html>
