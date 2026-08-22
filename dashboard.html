@@ -319,6 +319,14 @@
       flag = r.place_id
         ? '<span class="card-flag ok">Place ID verified</span>'
         : '<span class="card-flag missing">No Place ID — automations skipped</span>';
+      if (r.tier_label) {
+        flag += ' <span class="card-flag ok" style="background:rgba(43,76,126,0.1);color:#2B4C7E;">' + esc(r.tier_label) + '</span>';
+      }
+      if (r.payment_status === 'paid') {
+        flag += ' <span class="card-flag ok">Paid</span>';
+      } else if (r.stripe_checkout_url) {
+        flag += ' <span class="card-flag missing">Awaiting payment</span> <a href="' + esc(r.stripe_checkout_url) + '" target="_blank" style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;color:var(--pin);">Copy payment link</a>';
+      }
     }
 
     let actions = '';
@@ -350,6 +358,14 @@
   function buildConvertForm(r){
     return `
       <div class="convert-form" id="convert-${r.key}">
+        <label>Tier &amp; billing</label>
+        <select id="tier-${r.key}" style="width:100%;padding:9px 10px;border:1.5px solid var(--line);border-radius:3px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;background:#FCFBF8;color:var(--ink);">
+          <option value="foundation">Foundation \u2014 $1,000 one-time</option>
+          <option value="growth_monthly">Growth \u2014 $700/mo</option>
+          <option value="growth_annual">Growth \u2014 $7,000/yr</option>
+          <option value="dominate_monthly">Dominate \u2014 $1,800/mo</option>
+          <option value="dominate_annual">Dominate \u2014 $18,000/yr</option>
+        </select>
         <label>Industry context (services, specialties)</label>
         <textarea id="ic-${r.key}"></textarea>
         <label>Brand voice notes</label>
@@ -469,12 +485,25 @@
     }
   }
 
+  const TIER_MAP = {
+    foundation:       { price_id: 'price_1U745C20hOMOVUZER13qXzgP', mode: 'payment',      label: 'Foundation ($1,000 one-time)' },
+    growth_monthly:   { price_id: 'price_1U745r20hOMOVUZEyG6Ba5Np', mode: 'subscription', label: 'Growth Monthly ($700/mo)' },
+    growth_annual:    { price_id: 'price_1U746P20hOMOVUZEMqefryXF', mode: 'subscription', label: 'Growth Annual ($7,000/yr)' },
+    dominate_monthly: { price_id: 'price_1U746x20hOMOVUZEIAglyJdS', mode: 'subscription', label: 'Dominate Monthly ($1,800/mo)' },
+    dominate_annual:  { price_id: 'price_1U747Y20hOMOVUZEit2xWepv', mode: 'subscription', label: 'Dominate Annual ($18,000/yr)' }
+  };
+
   async function doConvert(recordKey, businessName, clientEmail){
+    const tierKey = document.getElementById('tier-' + recordKey).value;
+    const tier = TIER_MAP[tierKey];
     const body = {
       action: 'convert',
       record_key: recordKey,
       business_name: businessName,
       client_email: clientEmail,
+      price_id: tier.price_id,
+      mode: tier.mode,
+      tier_label: tier.label,
       industry_context: document.getElementById('ic-' + recordKey).value,
       brand_voice: document.getElementById('bv-' + recordKey).value,
       keyword_1: document.getElementById('k1-' + recordKey).value,
@@ -485,7 +514,7 @@
     };
     try {
       await postUpdate(body);
-      showToast(businessName + ' activated — onboarding email sent.');
+      showToast(businessName + ' activated — payment link & onboarding email sent.');
       loadClients();
     } catch (err) {
       showToast("Couldn't activate: " + err.message, true);
