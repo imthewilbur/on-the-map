@@ -281,6 +281,14 @@
     }
   }
 
+  function copyPaymentLink(url){
+    navigator.clipboard.writeText(url).then(() => {
+      showToast('Payment link copied to clipboard.');
+    }).catch(() => {
+      showToast("Couldn't copy — try selecting the link manually.", true);
+    });
+  }
+
   function esc(s){
     return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
@@ -316,17 +324,20 @@
     let metaLines = [esc(r.address || 'No address on file'), esc(r.client_email || 'No email on file')];
     let flag = '';
     if (status === 'active') {
-      flag = r.place_id
-        ? '<span class="card-flag ok">Place ID verified</span>'
-        : '<span class="card-flag missing">No Place ID — automations skipped</span>';
+      flag = '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;">';
+      flag += r.place_id
+        ? '<span class="card-flag ok" style="margin-bottom:0;white-space:nowrap;">Place ID verified</span>'
+        : '<span class="card-flag missing" style="margin-bottom:0;white-space:nowrap;">No Place ID — automations skipped</span>';
       if (r.tier_label) {
-        flag += ' <span class="card-flag ok" style="background:rgba(43,76,126,0.1);color:#2B4C7E;">' + esc(r.tier_label) + '</span>';
+        flag += '<span class="card-flag ok" style="margin-bottom:0;white-space:nowrap;background:rgba(43,76,126,0.1);color:#2B4C7E;">' + esc(r.tier_label) + '</span>';
       }
       if (r.payment_status === 'paid') {
-        flag += ' <span class="card-flag ok">Paid</span>';
+        flag += '<span class="card-flag ok" style="margin-bottom:0;white-space:nowrap;">Paid</span>';
       } else if (r.stripe_checkout_url) {
-        flag += ' <span class="card-flag missing">Awaiting payment</span> <a href="' + esc(r.stripe_checkout_url) + '" target="_blank" style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;color:var(--pin);">Copy payment link</a>';
+        flag += '<span class="card-flag missing" style="margin-bottom:0;white-space:nowrap;">Awaiting payment</span>';
+        flag += '<button onclick="copyPaymentLink(\'' + esc(r.stripe_checkout_url) + '\')" style="white-space:nowrap;font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;color:var(--pin);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;">Copy payment link</button>';
       }
+      flag += '</div>';
     }
 
     let actions = '';
