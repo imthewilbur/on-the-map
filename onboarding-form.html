@@ -52,6 +52,14 @@
 
   .missing-key{text-align:center;padding:60px 24px;}
   .missing-key p{color:var(--ink-soft);font-size:14px;}
+
+  .check-circle{
+    width:56px;height:56px;border-radius:50%;background:#2F8F5B;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+  }
+  .check-circle svg{width:26px;height:26px;}
+  #alreadyDone h2, #successArea h2{font-size:26px;margin-bottom:10px;}
+  #alreadyDone p, #successArea p{font-size:14px;color:var(--ink-soft);line-height:1.55;max-width:420px;margin:0 auto;}
 </style>
 </head>
 <body>
@@ -59,6 +67,30 @@
 <header><a href="/" class="wordmark"><img src="assets/logo.png" alt="Pack Rank"></a></header>
 
 <div class="wrap">
+  <div id="checkingArea" style="text-align:center;padding:80px 24px;">
+    <p style="color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:13px;">Loading&hellip;</p>
+  </div>
+
+  <div id="alreadyDone" style="display:none;text-align:center;padding:60px 24px;">
+    <div class="check-circle">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 13l4 4L19 7" stroke="#F3F0E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>Already submitted</h2>
+    <p>Thanks &mdash; we've already got your business info on file. If something's changed, just reply to your onboarding email and we'll update it.</p>
+  </div>
+
+  <div id="successArea" style="display:none;text-align:center;padding:60px 24px;">
+    <div class="check-circle">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 13l4 4L19 7" stroke="#F3F0E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>You're all set</h2>
+    <p>Thanks! We've got everything we need to get started. No further action needed on this form.</p>
+  </div>
+
   <div id="formArea" style="display:none;">
     <div class="eyebrow">Almost there</div>
     <h1>Tell us about your business</h1>
@@ -104,20 +136,44 @@
 
 <script>
   const WEBHOOK_URL = "https://hook.us2.make.com/1xe4bdspsp565c7pvwttbolkfr7v2d03";
+  const STATUS_URL = "https://hook.us2.make.com/j4gc0aww8i1bqiq7d8iswmj8wdksuwkf";
 
   const params = new URLSearchParams(window.location.search);
   const recordKey = params.get('key');
   const bizName = params.get('name') || '';
 
-  if (!recordKey) {
-    document.getElementById('missingKey').style.display = 'block';
-  } else {
-    document.getElementById('formArea').style.display = 'block';
+  function showState(id){
+    ['checkingArea','alreadyDone','successArea','formArea','missingKey'].forEach(s => {
+      document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
+    });
+  }
+
+  async function init(){
+    if (!recordKey) {
+      showState('missingKey');
+      return;
+    }
+
     if (bizName) {
       document.getElementById('bizNameSpan').textContent = ', ' + bizName + '!';
       document.getElementById('bizNameInline').textContent = bizName;
     }
+
+    try {
+      const res = await fetch(STATUS_URL + '?key=' + encodeURIComponent(recordKey));
+      const status = await res.json();
+      if ((status.onboarding_form_completed || '').toLowerCase().includes('yes')) {
+        showState('alreadyDone');
+        return;
+      }
+    } catch (err) {
+      // If the status check itself fails, fail open — show the form
+      // rather than blocking a real client from submitting.
+    }
+
+    showState('formArea');
   }
+  init();
 
   const form = document.getElementById('onboardForm');
   const btn = document.getElementById('submitBtn');
@@ -160,9 +216,7 @@
         method: 'POST',
         body: new URLSearchParams(payload)
       });
-      showMsg("Thanks! We've got everything we need to get started.", "success");
-      form.reset();
-      form.style.display = 'none';
+      showState('successArea');
     } catch (err) {
       showMsg("Something went wrong sending that. Mind trying again in a moment?", "error");
       btn.disabled = false; btn.textContent = "Submit";
