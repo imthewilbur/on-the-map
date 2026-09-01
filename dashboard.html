@@ -289,6 +289,23 @@
     });
   }
 
+  async function resendTodaysEmails(recordKey, businessName){
+    try {
+      const res = await fetch('https://hook.us2.make.com/20sj7snbps3dl9b16qn6aimwqr1vejdw', {
+        method: 'POST',
+        body: new URLSearchParams({ client_record_key: recordKey, business_name: businessName })
+      });
+      const result = await res.json();
+      if (result.count === 0 || result.count === '0') {
+        showToast('Nothing was generated for ' + businessName + ' today.', true);
+      } else {
+        showToast('Sent — check hello@packrank.net for ' + businessName + ' items.');
+      }
+    } catch (err) {
+      showToast("Couldn't send — try again in a moment.", true);
+    }
+  }
+
   function esc(s){
     return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
@@ -347,6 +364,7 @@
                  <button class="btn danger" onclick="doDelete('${r.key}','${esc(r.business_name)}')">Delete</button>`;
     } else if (status === 'active') {
       actions = `<button class="btn" onclick="setStatus('${r.key}','paused')">Pause</button>
+                 <button class="btn" onclick="resendTodaysEmails('${r.key}','${esc(r.business_name)}')">Resend Today's Emails</button>
                  <button class="btn" onclick="toggleEdit('${r.key}')">Edit</button>
                  <button class="btn danger" onclick="doDelete('${r.key}','${esc(r.business_name)}')">Delete</button>`;
     } else if (status === 'paused') {
