@@ -403,11 +403,11 @@
       <div class="convert-form" id="convert-${r.key}">
         <label>Tier &amp; billing</label>
         <select id="tier-${r.key}" style="width:100%;padding:9px 10px;border:1.5px solid var(--line);border-radius:3px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;background:#FCFBF8;color:var(--ink);">
-          <option value="foundation">Foundation \u2014 $1,000 one-time</option>
-          <option value="growth_monthly">Growth \u2014 $700/mo</option>
-          <option value="growth_annual">Growth \u2014 $7,000/yr</option>
-          <option value="dominate_monthly">Dominate \u2014 $1,800/mo</option>
-          <option value="dominate_annual">Dominate \u2014 $18,000/yr</option>
+          <option value="foundation">Foundation \u2014 $999 one-time</option>
+          <option value="growth_monthly">Growth \u2014 $699/mo</option>
+          <option value="growth_annual">Growth \u2014 $6,990/yr</option>
+          <option value="dominate_monthly">Dominate \u2014 $1,799/mo</option>
+          <option value="dominate_annual">Dominate \u2014 $17,990/yr</option>
         </select>
         <label>Industry context (services, specialties)</label>
         <textarea id="ic-${r.key}"></textarea>
@@ -537,11 +537,11 @@
   }
 
   const TIER_MAP = {
-    foundation:       { price_id: 'price_1U745C20hOMOVUZER13qXzgP', mode: 'payment',      label: 'Foundation ($1,000 one-time)' },
-    growth_monthly:   { price_id: 'price_1U745r20hOMOVUZEyG6Ba5Np', mode: 'subscription', label: 'Growth Monthly ($700/mo)' },
-    growth_annual:    { price_id: 'price_1U746P20hOMOVUZEMqefryXF', mode: 'subscription', label: 'Growth Annual ($7,000/yr)' },
-    dominate_monthly: { price_id: 'price_1U746x20hOMOVUZEIAglyJdS', mode: 'subscription', label: 'Dominate Monthly ($1,800/mo)' },
-    dominate_annual:  { price_id: 'price_1U747Y20hOMOVUZEit2xWepv', mode: 'subscription', label: 'Dominate Annual ($18,000/yr)' }
+    foundation:       { price_id: 'price_1UDpYl20hOMOVUZEfRjkc3xg', mode: 'payment',      label: 'Foundation ($999 one-time)' },
+    growth_monthly:   { price_id: 'price_1UDpYl20hOMOVUZEujehiXpq', mode: 'subscription', label: 'Growth Monthly ($699/mo)' },
+    growth_annual:    { price_id: 'price_1UDpYl20hOMOVUZEA3N4VOmg', mode: 'subscription', label: 'Growth Annual ($6,990/yr)' },
+    dominate_monthly: { price_id: 'price_1UDpYl20hOMOVUZEzvGH8Lmu', mode: 'subscription', label: 'Dominate Monthly ($1,799/mo)' },
+    dominate_annual:  { price_id: 'price_1UDpYm20hOMOVUZECP4LTc4y', mode: 'subscription', label: 'Dominate Annual ($17,990/yr)' }
   };
 
   async function doConvert(recordKey, businessName, clientEmail, address){
