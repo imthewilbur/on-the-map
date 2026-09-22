@@ -53,7 +53,7 @@
   }
   .refresh-note button:hover{border-color:var(--pin);color:var(--pin);}
 
-  .columns{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start;}
+  .columns{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:start;}
   .column{background:var(--paper-2);border:1px solid var(--line);border-radius:6px;overflow:hidden;}
   .column-head{
     padding:16px 18px;border-bottom:1px solid var(--line);
@@ -67,6 +67,11 @@
   .column.leads .column-head{border-bottom-color:var(--route,#2B4C7E);}
   .column.active .column-head{border-bottom-color:var(--found);}
   .column.paused .column-head{border-bottom-color:var(--warn);}
+  .column.prospects .column-head{border-bottom-color:var(--pin);flex-direction:column;align-items:stretch;gap:10px;}
+  .column-head-actions{display:flex;gap:8px;}
+  .column-head-actions .btn{flex:1;font-size:10.5px;padding:6px 8px;}
+  .prospect-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);margin:2px 2px 2px;}
+  .prospect-note{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);padding:8px 6px 4px;}
   .column-body{padding:14px;display:flex;flex-direction:column;gap:12px;min-height:60px;}
   .empty-msg{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-soft);padding:14px 6px;}
 
@@ -201,6 +206,18 @@
       <div class="column-head"><h2>Paused</h2><span class="count mono" id="count-paused">0</span></div>
       <div class="column-body" id="col-paused"></div>
     </div>
+    <div class="column prospects">
+      <div class="column-head">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <h2>Prospects</h2><span class="count mono" id="count-prospect">0</span>
+        </div>
+        <div class="column-head-actions">
+          <button class="btn" onclick="doPullProspects()">Pull New</button>
+          <button class="btn primary" onclick="doDraftBatch()">Draft Batch</button>
+        </div>
+      </div>
+      <div class="column-body" id="col-prospect"></div>
+    </div>
   </div>
 </div>
 
@@ -209,6 +226,10 @@
 <script>
   const LIST_URL = "https://hook.us2.make.com/r952r5537uim78dt3aflvgq2nkmman2c";
   const UPDATE_URL = "https://hook.us2.make.com/hvltbleo2fkhtcmdtdc2edxes7kyy7ds";
+  const PROSPECTS_LIST_URL = "https://hook.us2.make.com/gv48tvm48dzhv65hdb9qbirivwj0s5v4";
+  const PROSPECTS_UPDATE_URL = "https://hook.us2.make.com/4qzdttnpxdt3imm7d39iejz6zmxqhnqg";
+  const PULL_PROSPECTS_URL = "https://hook.us2.make.com/stqxx9isx78ypikskbqzyqgpir5j7tjy";
+  const DRAFT_BATCH_URL = "https://hook.us2.make.com/3yaessizzo8gtksw2tdsyqm1wbheewu2";
   const STORAGE_KEY = "pr_dashboard_key";
 
   // The key lives ONLY in localStorage on this device. It is never written
@@ -236,6 +257,7 @@
     localStorage.setItem(STORAGE_KEY, KEY);
     showBoard();
     loadClients();
+    loadProspects();
   }
 
   document.getElementById('gateKeyInput').addEventListener('keydown', function(e){
@@ -536,6 +558,174 @@
     }
   }
 
+  // ---------- PROSPECTS (outreach pipeline) ----------
+
+  async function loadProspects(){
+    try {
+      const res = await fetch(`${PROSPECTS_LIST_URL}?key=${encodeURIComponent(KEY)}`);
+      if (res.status === 401) return; // client board's loadClients already handles the gate
+      if (!res.ok) throw new Error('Request failed: ' + res.status);
+      const records = await res.json();
+      renderProspects(Array.isArray(records) ? records : []);
+    } catch (err) {
+      document.getElementById('col-prospect').innerHTML =
+        '<div class="prospect-note">Couldn\'t load prospects \u2014 ' + esc(err.message) + '</div>';
+    }
+  }
+
+  function renderProspects(records){
+    const notContacted = records.filter(r => (r.status || '') === 'not_contacted');
+    const drafted = records.filter(r => (r.status || '') === 'drafted');
+    const emailedCount = records.filter(r => (r.status || '') === 'emailed').length;
+    const skippedCount = records.filter(r => (r.status || '') === 'skipped').length;
+
+    document.getElementById('count-prospect').textContent = notContacted.length + drafted.length;
+
+    const col = document.getElementById('col-prospect');
+    col.innerHTML = '';
+
+    if (drafted.length === 0 && notContacted.length === 0) {
+      col.innerHTML = '<div class="empty-msg">Nothing here right now. Use "Pull New" to find prospects by category.</div>';
+    } else {
+      if (drafted.length > 0) {
+        col.innerHTML += '<div class="prospect-sub">Ready to review (' + drafted.length + ')</div>';
+        drafted.forEach(r => col.appendChild(buildProspectCard(r)));
+      }
+      if (notContacted.length > 0) {
+        col.innerHTML += '<div class="prospect-sub">Not yet drafted (' + notContacted.length + ')</div>';
+        notContacted.forEach(r => col.appendChild(buildProspectCard(r)));
+      }
+    }
+
+    if (emailedCount > 0 || skippedCount > 0) {
+      const note = document.createElement('div');
+      note.className = 'prospect-note';
+      note.textContent = (emailedCount > 0 ? emailedCount + ' already emailed' : '') +
+        (emailedCount > 0 && skippedCount > 0 ? ' \u00b7 ' : '') +
+        (skippedCount > 0 ? skippedCount + ' skipped' : '');
+      col.appendChild(note);
+    }
+  }
+
+  function buildProspectCard(r){
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const metaLines = [
+      esc(r.category || ''),
+      (r.rating ? '\u2605 ' + esc(r.rating) + ' (' + esc(r.review_count) + ' reviews)' : ''),
+      esc(r.phone || ''),
+    ].filter(Boolean);
+
+    let body = `
+      <div class="card-name">${esc(r.business_name || 'Unnamed')}</div>
+      <div class="card-meta">${metaLines.join('<br>')}</div>
+    `;
+
+    if (r.status === 'drafted') {
+      body += `
+        <div class="edit-form show" style="border-top:none;padding-top:0;margin-top:0;">
+          <label>Email address (required to send \u2014 not provided by Google)</label>
+          <input id="p-email-${r.key}" value="${esc(r.email)}" placeholder="owner@business.com">
+          <label>Draft email</label>
+          <textarea id="p-draft-${r.key}" style="min-height:140px;">${esc(r.draft_email)}</textarea>
+        </div>
+        <div class="card-actions" style="margin-top:12px;">
+          <button class="btn primary" onclick="doApproveSend('${r.key}','${esc(r.business_name)}')">Approve &amp; Send</button>
+          <button class="btn" onclick="doSaveProspectEdit('${r.key}')">Save Draft</button>
+          <button class="btn danger" onclick="doSkipProspect('${r.key}','${esc(r.business_name)}')">Skip</button>
+        </div>
+      `;
+    } else {
+      body += `
+        <div class="card-actions">
+          <button class="btn danger" onclick="doSkipProspect('${r.key}','${esc(r.business_name)}')">Skip</button>
+        </div>
+      `;
+    }
+
+    card.innerHTML = body;
+    return card;
+  }
+
+  async function postProspectUpdate(body){
+    const params = new URLSearchParams({ key: KEY, today: todayStr(), ...body });
+    const res = await fetch(PROSPECTS_UPDATE_URL, { method: 'POST', body: params });
+    if (!res.ok) throw new Error('Request failed: ' + res.status);
+    return res;
+  }
+
+  async function doApproveSend(recordKey, businessName){
+    const email = document.getElementById('p-email-' + recordKey).value.trim();
+    if (!email) {
+      showToast('Add an email address before sending.', true);
+      return;
+    }
+    const draft = document.getElementById('p-draft-' + recordKey).value;
+    if (!confirm(`Send this outreach email to ${businessName} at ${email}?`)) return;
+    try {
+      await postProspectUpdate({ action: 'approve_send', record_key: recordKey, email, draft_email: draft });
+      showToast('Sent to ' + businessName + '.');
+      loadProspects();
+    } catch (err) {
+      showToast("Couldn't send: " + err.message, true);
+    }
+  }
+
+  async function doSaveProspectEdit(recordKey){
+    const email = document.getElementById('p-email-' + recordKey).value.trim();
+    const draft = document.getElementById('p-draft-' + recordKey).value;
+    try {
+      await postProspectUpdate({ action: 'edit', record_key: recordKey, email, draft_email: draft });
+      showToast('Draft saved.');
+    } catch (err) {
+      showToast("Couldn't save: " + err.message, true);
+    }
+  }
+
+  async function doSkipProspect(recordKey, businessName){
+    try {
+      await postProspectUpdate({ action: 'skip', record_key: recordKey });
+      showToast(businessName + ' skipped.');
+      loadProspects();
+    } catch (err) {
+      showToast("Couldn't skip: " + err.message, true);
+    }
+  }
+
+  async function doPullProspects(){
+    const category = prompt('What category should I search for in Omaha? (e.g. "landscaping companies", "pest control")');
+    if (!category) return;
+    showToast('Searching for ' + category + '\u2026');
+    try {
+      const res = await fetch(PULL_PROSPECTS_URL, {
+        method: 'POST',
+        body: new URLSearchParams({ key: KEY, category, review_threshold: '80', today: todayStr() })
+      });
+      const result = await res.json();
+      showToast('Added ' + (result.added || 0) + ' new prospects out of ' + (result.searched || 0) + ' found.');
+      loadProspects();
+    } catch (err) {
+      showToast("Couldn't pull prospects \u2014 try again in a moment.", true);
+    }
+  }
+
+  async function doDraftBatch(){
+    if (!confirm('Draft outreach emails for all not-yet-drafted prospects? This uses AI credits per business.')) return;
+    showToast('Drafting\u2026 this can take a minute for a full batch.');
+    try {
+      const res = await fetch(DRAFT_BATCH_URL, {
+        method: 'POST',
+        body: new URLSearchParams({ key: KEY, batch_label: todayStr(), today: todayStr() })
+      });
+      const result = await res.json();
+      showToast('Drafted ' + (result.drafted || 0) + ' emails \u2014 ready to review.');
+      loadProspects();
+    } catch (err) {
+      showToast("Couldn't draft \u2014 try again in a moment.", true);
+    }
+  }
+
   const TIER_MAP = {
     foundation:       { price_id: 'price_1UDpYl20hOMOVUZEfRjkc3xg', mode: 'payment',      label: 'Foundation ($999 one-time)' },
     growth_monthly:   { price_id: 'price_1UDpYl20hOMOVUZEujehiXpq', mode: 'subscription', label: 'Growth Monthly ($699/mo)' },
@@ -582,6 +772,7 @@
   if (KEY) {
     showBoard();
     loadClients();
+    loadProspects();
   } else {
     showGate(false);
   }
