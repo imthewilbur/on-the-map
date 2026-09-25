@@ -159,6 +159,58 @@
   @media (max-width:900px){
     .columns{grid-template-columns:1fr;}
   }
+  .tab-toggle{display:flex;gap:2px;background:var(--asphalt-2);border-radius:5px;padding:3px;margin-right:16px;}
+  .tab-btn{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.03em;
+    background:none;border:none;color:#8B8F9C;padding:7px 14px;border-radius:3px;cursor:pointer;
+  }
+  .tab-btn.active{background:var(--pin);color:var(--paper);font-weight:600;}
+
+  .roi-picker{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
+  .roi-picker select{
+    font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px 14px;border:1.5px solid var(--line);
+    border-radius:4px;background:#fff;color:var(--ink);min-width:260px;
+  }
+  .roi-empty{color:var(--ink-soft);font-size:14px;padding:40px 0;text-align:center;}
+
+  .roi-report{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .roi-report-head{background:var(--asphalt);color:var(--paper);padding:28px 32px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;}
+  .roi-report-head .biz{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8B8F9C;margin-bottom:4px;}
+  .roi-report-head h2{font-size:clamp(24px,3vw,32px);}
+  .roi-report-head .period{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8B8F9C;}
+
+  .roi-score-block{display:flex;align-items:baseline;gap:14px;}
+  .roi-score-num{font-family:'Bebas Neue',sans-serif;font-size:56px;line-height:1;color:var(--paper);}
+  .roi-score-max{font-family:'IBM Plex Mono',monospace;font-size:15px;color:#8B8F9C;}
+  .roi-delta{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;padding:4px 9px;border-radius:3px;}
+  .roi-delta.up{background:rgba(47,143,91,0.18);color:#5FCB8F;}
+  .roi-delta.down{background:rgba(199,67,29,0.18);color:#F0876A;}
+  .roi-delta.flat{background:rgba(139,143,156,0.18);color:#B7BAC4;}
+
+  .roi-metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);}
+  .roi-metric{background:#fff;padding:20px 24px;}
+  .roi-metric-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);margin-bottom:6px;}
+  .roi-metric-val{font-size:24px;font-weight:600;color:var(--ink);}
+  .roi-metric-sub{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+
+  .roi-section{padding:28px 32px;border-top:1px solid var(--line);}
+  .roi-section h3{font-size:20px;margin-bottom:16px;}
+
+  .roi-history-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .roi-history-table th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);padding:8px 12px;border-bottom:1.5px solid var(--line);}
+  .roi-history-table td{padding:10px 12px;border-bottom:1px solid var(--line);}
+  .roi-history-table tr:last-child td{border-bottom:none;}
+
+  .roi-kw-list{display:flex;flex-direction:column;gap:10px;}
+  .roi-kw-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--paper-2);border-radius:4px;font-size:13.5px;}
+  .roi-kw-rank{font-family:'IBM Plex Mono',monospace;font-weight:600;}
+
+  .roi-share-note{font-size:12px;color:var(--ink-soft);padding:16px 32px;background:var(--paper-2);}
+
+  @media print{
+    header, .tab-toggle, .logout-btn, .roi-picker, .roi-share-note{display:none !important;}
+    body{background:#fff;}
+  }
 </style>
 </head>
 <body>
@@ -167,7 +219,10 @@
   <div class="header-row">
     <a href="#" class="wordmark"><img src="assets/logo.png" alt="Pack Rank"></a>
     <div style="display:flex;align-items:center;">
-      <div class="header-title">CLIENT PIPELINE</div>
+      <div class="tab-toggle" id="tabToggle" style="display:none;">
+        <button class="tab-btn active" id="tabBtnPipeline" onclick="switchTab('pipeline')">Client Pipeline</button>
+        <button class="tab-btn" id="tabBtnRoi" onclick="switchTab('roi')">ROI Reports</button>
+      </div>
       <button class="logout-btn" id="logoutBtn" style="display:none;" onclick="doLogout()">Log out</button>
     </div>
   </div>
@@ -221,6 +276,22 @@
   </div>
 </div>
 
+<!-- ROI REPORTS TAB -->
+<div class="board" id="roiBoardWrap" style="display:none;">
+  <div class="board-head">
+    <h1>ROI Reports</h1>
+    <div class="refresh-note">Client-facing — safe to screen-share or print<button onclick="window.print()">Print / Save PDF</button></div>
+  </div>
+
+  <div class="roi-picker">
+    <select id="roiClientSelect" onchange="loadRoiReport()">
+      <option value="">Select a client&hellip;</option>
+    </select>
+  </div>
+
+  <div id="roiContent"><div class="roi-empty">Select a client above to view their report.</div></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -230,7 +301,10 @@
   const PROSPECTS_UPDATE_URL = "https://hook.us2.make.com/4qzdttnpxdt3imm7d39iejz6zmxqhnqg";
   const PULL_PROSPECTS_URL = "https://hook.us2.make.com/stqxx9isx78ypikskbqzyqgpir5j7tjy";
   const DRAFT_BATCH_URL = "https://hook.us2.make.com/3yaessizzo8gtksw2tdsyqm1wbheewu2";
+  const ROI_REPORT_URL = "https://hook.us2.make.com/hcybi4eh18u2v95ea3xum2w7b8lx99ce";
   const STORAGE_KEY = "pr_dashboard_key";
+  let allClientRecords = [];
+  let currentTab = 'pipeline';
 
   // The key lives ONLY in localStorage on this device. It is never written
   // into this file, never committed to any repo, and never visible to
@@ -240,6 +314,8 @@
   function showGate(withError){
     document.getElementById('gateWrap').style.display = 'flex';
     document.getElementById('boardWrap').style.display = 'none';
+    document.getElementById('roiBoardWrap').style.display = 'none';
+    document.getElementById('tabToggle').style.display = 'none';
     document.getElementById('logoutBtn').style.display = 'none';
     document.getElementById('gateError').className = 'gate-error' + (withError ? ' show' : '');
   }
@@ -247,7 +323,16 @@
   function showBoard(){
     document.getElementById('gateWrap').style.display = 'none';
     document.getElementById('boardWrap').style.display = 'block';
+    document.getElementById('tabToggle').style.display = 'flex';
     document.getElementById('logoutBtn').style.display = 'inline-block';
+  }
+
+  function switchTab(tab){
+    currentTab = tab;
+    document.getElementById('tabBtnPipeline').className = 'tab-btn' + (tab === 'pipeline' ? ' active' : '');
+    document.getElementById('tabBtnRoi').className = 'tab-btn' + (tab === 'roi' ? ' active' : '');
+    document.getElementById('boardWrap').style.display = (tab === 'pipeline') ? 'block' : 'none';
+    document.getElementById('roiBoardWrap').style.display = (tab === 'roi') ? 'block' : 'none';
   }
 
   function submitKey(){
@@ -297,7 +382,9 @@
       }
       if (!res.ok) throw new Error('Request failed: ' + res.status);
       const records = await res.json();
-      render(Array.isArray(records) ? records : []);
+      allClientRecords = Array.isArray(records) ? records : [];
+      render(allClientRecords);
+      populateRoiDropdown();
     } catch (err) {
       document.getElementById('loading').textContent = "Couldn't load clients — " + err.message;
     }
@@ -339,6 +426,200 @@
     } catch (err) {
       showToast("Couldn't send — try again in a moment.", true);
     }
+  }
+
+  // ---------- ROI REPORTS ----------
+
+  function populateRoiDropdown(){
+    const sel = document.getElementById('roiClientSelect');
+    const prior = sel.value;
+    sel.innerHTML = '<option value="">Select a client&hellip;</option>';
+    allClientRecords
+      .filter(r => r.data && (r.data.status === 'active' || r.data.status === 'paused'))
+      .sort((a, b) => (a.data.business_name || '').localeCompare(b.data.business_name || ''))
+      .forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.key;
+        opt.textContent = r.data.business_name + (r.data.status === 'paused' ? ' (paused)' : '');
+        sel.appendChild(opt);
+      });
+    if (prior) sel.value = prior;
+  }
+
+  // A keyword rank field is either a number-as-string, the literal string
+  // "not in visible results", or "n/a" for an untracked slot. We penalize
+  // "not in visible results" as position 21 (just past Google's usual ~20
+  // visible results) rather than excluding it — a business Google isn't
+  // showing at all is worse than a business ranking low, and should pull
+  // the average down accordingly. "n/a" slots are excluded entirely since
+  // no keyword was tracked there.
+  function parseRank(val){
+    if (!val || val === 'n/a') return null;
+    if (val === 'not in visible results') return 21;
+    const n = parseFloat(val);
+    return isNaN(n) ? null : n;
+  }
+
+  function avgRankForSnapshot(snap){
+    const ranks = [1,2,3,4,5]
+      .map(i => parseRank(snap['keyword_' + i + '_rank']))
+      .filter(v => v !== null);
+    if (ranks.length === 0) return null;
+    return ranks.reduce((a,b) => a+b, 0) / ranks.length;
+  }
+
+  // Visibility Score: a single 0-100 composite so a non-technical client
+  // has one number to watch trend upward, rather than several disconnected
+  // metrics. Weighted 40% rank / 30% reviews / 30% citations when all three
+  // are available for that month; reweighted proportionally when citation
+  // data is missing for a given month (Citation Check can run independently
+  // of Rank Tracker, so gaps are expected, not a bug).
+  function visibilityScore(avgRank, reviewCount, citationScore){
+    const rankComp = (avgRank !== null) ? Math.max(0, 100 - (avgRank - 1) * 5) : null;
+    const reviewComp = (reviewCount !== null && reviewCount !== undefined) ? Math.min(100, Number(reviewCount) * 2) : null;
+    const citeComp = (citationScore !== null && citationScore !== undefined && citationScore !== '') ? Number(citationScore) : null;
+
+    const parts = [];
+    if (rankComp !== null) parts.push([rankComp, 0.4]);
+    if (reviewComp !== null) parts.push([reviewComp, 0.3]);
+    if (citeComp !== null) parts.push([citeComp, 0.3]);
+    if (parts.length === 0) return null;
+
+    const totalWeight = parts.reduce((s, p) => s + p[1], 0);
+    const weighted = parts.reduce((s, p) => s + p[0] * p[1], 0);
+    return Math.round(weighted / totalWeight);
+  }
+
+  function fmtRank(v){
+    return (v === null) ? '—' : v.toFixed(1);
+  }
+
+  function deltaBadge(current, previous){
+    if (current === null || previous === null || previous === undefined) return '';
+    const diff = current - previous;
+    if (diff === 0) return '<span class="roi-delta flat">No change</span>';
+    const cls = diff > 0 ? 'up' : 'down';
+    const arrow = diff > 0 ? '▲' : '▼';
+    return `<span class="roi-delta ${cls}">${arrow} ${Math.abs(diff)}</span>`;
+  }
+
+  async function loadRoiReport(){
+    const recordKey = document.getElementById('roiClientSelect').value;
+    const content = document.getElementById('roiContent');
+    if (!recordKey) {
+      content.innerHTML = '<div class="roi-empty">Select a client above to view their report.</div>';
+      return;
+    }
+    content.innerHTML = '<div class="roi-empty">Loading&hellip;</div>';
+
+    try {
+      const res = await fetch(ROI_REPORT_URL, {
+        method: 'POST',
+        body: new URLSearchParams({ client_record_key: recordKey })
+      });
+      const data = await res.json();
+      renderRoiReport(recordKey, data.rank_snapshots || [], data.citation_snapshots || []);
+    } catch (err) {
+      content.innerHTML = '<div class="roi-empty">Couldn\'t load this report — try again in a moment.</div>';
+    }
+  }
+
+  function renderRoiReport(recordKey, rankSnapshots, citationSnapshots){
+    const content = document.getElementById('roiContent');
+    const clientRec = allClientRecords.find(r => r.key === recordKey);
+    const businessName = clientRec ? clientRec.data.business_name : '';
+
+    if (rankSnapshots.length === 0) {
+      content.innerHTML = `<div class="roi-empty">No data yet for ${esc(businessName)}. The first monthly snapshot lands after their next scheduled Rank Tracker / Citation Check run — this report builds automatically from there.</div>`;
+      return;
+    }
+
+    // Sort oldest to newest, then match each rank snapshot to a same-date
+    // citation snapshot where one exists (the two scenarios run independently).
+    const sorted = rankSnapshots.slice().sort((a,b) => (a.snapshot_date || '').localeCompare(b.snapshot_date || ''));
+    const rows = sorted.map(snap => {
+      const avgRank = avgRankForSnapshot(snap);
+      const citeMatch = citationSnapshots.find(c => c.snapshot_date === snap.snapshot_date);
+      const citeScore = citeMatch ? citeMatch.citation_score : null;
+      return {
+        date: snap.snapshot_date,
+        avgRank: avgRank,
+        reviewCount: snap.review_count,
+        rating: snap.rating,
+        citationScore: citeScore,
+        score: visibilityScore(avgRank, snap.review_count, citeScore),
+        snap: snap
+      };
+    });
+
+    const latest = rows[rows.length - 1];
+    const previous = rows.length > 1 ? rows[rows.length - 2] : null;
+    const isBaseline = rows.length === 1;
+
+    const keywordRows = [1,2,3,4,5]
+      .map(i => ({ label: latest.snap['keyword_' + i + '_label'], rank: latest.snap['keyword_' + i + '_rank'] }))
+      .filter(k => k.label && k.rank !== 'n/a');
+
+    const historyRows = rows.slice().reverse().map(r => `
+      <tr>
+        <td class="mono">${esc(r.date)}</td>
+        <td>${r.score !== null ? r.score : '—'}</td>
+        <td>${fmtRank(r.avgRank)}</td>
+        <td>${r.reviewCount !== undefined ? r.reviewCount : '—'}${r.rating ? ' (' + r.rating + '★)' : ''}</td>
+        <td>${r.citationScore !== null ? r.citationScore + '/100' : '—'}</td>
+      </tr>`).join('');
+
+    content.innerHTML = `
+      <div class="roi-report">
+        <div class="roi-report-head">
+          <div>
+            <div class="biz">${esc(businessName)}</div>
+            <h2>Visibility Report</h2>
+            <div class="period">${isBaseline ? 'Baseline — ' + esc(latest.date) : esc(rows[0].date) + ' → ' + esc(latest.date)}</div>
+          </div>
+          <div class="roi-score-block">
+            <div class="roi-score-num">${latest.score !== null ? latest.score : '—'}<span class="roi-score-max">/100</span></div>
+            ${!isBaseline ? deltaBadge(latest.score, previous.score) : ''}
+          </div>
+        </div>
+
+        <div class="roi-metrics-row">
+          <div class="roi-metric">
+            <div class="roi-metric-label">Avg. Search Rank</div>
+            <div class="roi-metric-val">${fmtRank(latest.avgRank)}</div>
+            <div class="roi-metric-sub">${!isBaseline ? deltaBadge(previous.avgRank !== null && latest.avgRank !== null ? -latest.avgRank : null, previous.avgRank !== null ? -previous.avgRank : null) : 'across tracked keywords'}</div>
+          </div>
+          <div class="roi-metric">
+            <div class="roi-metric-label">Reviews</div>
+            <div class="roi-metric-val">${latest.reviewCount !== undefined ? latest.reviewCount : '—'}${latest.rating ? ' <span style="font-size:15px;color:var(--ink-soft);">(' + latest.rating + '★)</span>' : ''}</div>
+            <div class="roi-metric-sub">${!isBaseline ? deltaBadge(Number(latest.reviewCount), Number(previous.reviewCount)) : 'total on Google'}</div>
+          </div>
+          <div class="roi-metric">
+            <div class="roi-metric-label">Citation Score</div>
+            <div class="roi-metric-val">${latest.citationScore !== null ? latest.citationScore + '/100' : '—'}</div>
+            <div class="roi-metric-sub">${!isBaseline ? deltaBadge(latest.citationScore, previous.citationScore) : 'directory consistency'}</div>
+          </div>
+        </div>
+
+        <div class="roi-section">
+          <h3>Current keyword rankings</h3>
+          <div class="roi-kw-list">
+            ${keywordRows.map(k => `<div class="roi-kw-row"><span>${esc(k.label)}</span><span class="roi-kw-rank">${k.rank === 'not in visible results' ? 'Not visible' : '#' + esc(k.rank)}</span></div>`).join('') || '<div class="roi-empty">No keywords tracked yet.</div>'}
+          </div>
+        </div>
+
+        ${rows.length > 1 ? `
+        <div class="roi-section">
+          <h3>History</h3>
+          <table class="roi-history-table">
+            <tr><th>Month</th><th>Score</th><th>Avg. Rank</th><th>Reviews</th><th>Citations</th></tr>
+            ${historyRows}
+          </table>
+        </div>` : ''}
+
+        <div class="roi-share-note">Visibility Score blends keyword rank, review growth, and directory consistency into one trackable number. Safe to screen-share or print directly for the client — this view has no internal admin controls.</div>
+      </div>
+    `;
   }
 
   function esc(s){
