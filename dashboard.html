@@ -435,12 +435,12 @@
     const prior = sel.value;
     sel.innerHTML = '<option value="">Select a client&hellip;</option>';
     allClientRecords
-      .filter(r => r.data && (r.data.status === 'active' || r.data.status === 'paused'))
-      .sort((a, b) => (a.data.business_name || '').localeCompare(b.data.business_name || ''))
+      .filter(r => r.status === 'active' || r.status === 'paused')
+      .sort((a, b) => (a.business_name || '').localeCompare(b.business_name || ''))
       .forEach(r => {
         const opt = document.createElement('option');
         opt.value = r.key;
-        opt.textContent = r.data.business_name + (r.data.status === 'paused' ? ' (paused)' : '');
+        opt.textContent = r.business_name + (r.status === 'paused' ? ' (paused)' : '');
         sel.appendChild(opt);
       });
     if (prior) sel.value = prior;
@@ -527,7 +527,7 @@
   function renderRoiReport(recordKey, rankSnapshots, citationSnapshots){
     const content = document.getElementById('roiContent');
     const clientRec = allClientRecords.find(r => r.key === recordKey);
-    const businessName = clientRec ? clientRec.data.business_name : '';
+    const businessName = clientRec ? clientRec.business_name : '';
 
     if (rankSnapshots.length === 0) {
       content.innerHTML = `<div class="roi-empty">No data yet for ${esc(businessName)}. The first monthly snapshot lands after their next scheduled Rank Tracker / Citation Check run — this report builds automatically from there.</div>`;
